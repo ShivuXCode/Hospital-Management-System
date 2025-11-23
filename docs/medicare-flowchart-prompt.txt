@@ -1,0 +1,14 @@
+Create a comprehensive flowchart that maps how the Medicare web platform operates from the moment a visitor arrives on the site. Use a clear top-down layout that branches for each role: Guest, Patient, Doctor, Nurse, and Admin, and keep all five role flows within the same diagram.
+
+Key requirements:
+1. Begin with a single Start node leading to "Open Medicare Platform" and a decision for selecting the user role.
+2. Guest branch: account creation, email/phone verification, login, authentication check, retry/reset path, and transition into the patient dashboard once authenticated.
+3. Patient branch: login and authentication loop, dashboard actions (search/filter doctors, view profile), service selection (clinic or teleconsult), slot selection with availability decision, payment flow with success/retry handling, confirmations, reminders, check-in, consultation, post-visit records, feedback, and logout.
+4. Doctor branch: login/auth checks, dashboard review, accepting/declining appointments, notifying patients on decline, preparation, consultation, documentation, updating availability, and logout.
+5. Nurse branch: login/auth checks, dashboard overview, assignment management, updating vitals/notes, assisting consultations, and logout.
+6. Admin branch: login/auth checks, admin dashboard, managing all user types, approving doctors, configuring departments/services, managing appointments (including overrides), viewing reports/analytics, adjusting system settings, and logout.
+7. Close every branch with a Stop node to show completion.
+
+Keep the wording concise inside the nodes (e.g., "Retry or Reset Password") and ensure decision points are modeled with diamond nodes. Highlight loops for retries by routing arrows back to the relevant step. The final diagram should make the parallel flows for each role obvious while sharing the same Start/Stop context.
+
+Once the flowchart is defined, generate a high-resolution image (SVG or PNG) of the complete diagram that includes every role path together in the same visual.

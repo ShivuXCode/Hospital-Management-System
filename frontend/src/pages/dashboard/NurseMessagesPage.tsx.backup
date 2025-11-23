@@ -1,0 +1,183 @@
+import { useEffect, useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { Loader2, Mail, Send, MailOpen, AlertTriangle } from 'lucide-react';
+import { apiService, API_URL } from '@/services/api';
+import { useToast } from '@/hooks/use-toast';
+
+const NurseMessagesPage = () => {
+  const { toast } = useToast();
+  const [loading, setLoading] = useState(false);
+  const [messages, setMessages] = useState<any[]>([]);
+  const [assignedDoctors, setAssignedDoctors] = useState<any[]>([]);
+  const [isComposeOpen, setIsComposeOpen] = useState(false);
+  const [form, setForm] = useState({ subject: '', message: '', priority: 'normal', doctorUserId: '' });
+
+  const load = async () => {
+    setLoading(true);
+    try {
+      // inbox
+      const inboxRes = await fetch(`${API_URL}/messages`, { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } });
+      const inbox = await inboxRes.json();
+      if (inbox.success) setMessages(inbox.messages || []);
+
+      // assigned doctors (to find userId for sending)
+      const user = apiService.getUser();
+      if (user) {
+        // Need Nurse document id; reuse appointments to infer doctors, or call nurses list? We'll fetch via nurses endpoint by finding Nurse by user id is not available; so fallback to appointments for id and name mapping.
+        const appts = await apiService.getAppointments();
+        // Collect doctor names from appointments
+        const nameSet = new Set<string>();
+        (appts.appointments || []).forEach((a:any)=>{ if (a.doctorName) nameSet.add(a.doctorName);});
+        const names = Array.from(nameSet);
+        // Resolve each doctor's user via doctors list
+        const docsRes = await apiService.getDoctors();
+        const mapped = (docsRes.doctors||[]).filter((d:any)=> names.includes(d.name));
+        setAssignedDoctors(mapped);
+      }
+    } catch (e) {
+      toast({ title: 'Error', description: 'Failed to load messages', variant: 'destructive' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => { load(); }, []);
+
+  // Polling for near real-time updates (every 6 seconds)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      load();
+    }, 6000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const markRead = async (id: string) => {
+    try {
+      await fetch(`${API_URL}/messages/${id}/read`, { method: 'PUT', headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } });
+      load();
+    } catch {}
+  };
+
+  const send = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!form.doctorUserId) {
+      toast({ title: 'Select doctor', description: 'Choose a recipient doctor', variant: 'destructive' });
+      return;
+    }
+    setLoading(true);
+    try {
+      const response = await fetch(`${API_URL}/messages`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('token')}` },
+        body: JSON.stringify({ recipientId: form.doctorUserId, subject: form.subject, message: form.message, priority: form.priority }),
+      });
+      const data = await response.json();
+      if (data.success) {
+        toast({ title: 'Message sent' });
+        setIsComposeOpen(false);
+        setForm({ subject: '', message: '', priority: 'normal', doctorUserId: '' });
+        load();
+      } else {
+        toast({ title: 'Error', description: data.message || 'Failed to send', variant: 'destructive' });
+      }
+    } catch (e) {
+      toast({ title: 'Error', description: 'Failed to send', variant: 'destructive' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold mb-2">Messages</h1>
+          <p className="text-muted-foreground">Communicate with assigned doctors</p>
+        </div>
+        <Dialog open={isComposeOpen} onOpenChange={setIsComposeOpen}>
+          <DialogTrigger asChild>
+            <Button><Send className="h-4 w-4 mr-2"/>Compose</Button>
+          </DialogTrigger>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle>New Message</DialogTitle>
+              <DialogDescription>Send to an assigned doctor</DialogDescription>
+            </DialogHeader>
+            <form onSubmit={send} className="space-y-3">
+              <div>
+                <Label>Doctor *</Label>
+                <select className="w-full border rounded-md h-9 px-3" value={form.doctorUserId} onChange={(e)=>setForm({...form, doctorUserId:e.target.value})}>
+                  <option value="">Select doctor</option>
+                  {assignedDoctors.map((d:any)=> (
+                    <option key={d._id} value={d.userId || d.user?._id || ''}>{d.name}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <Label>Subject *</Label>
+                <Input value={form.subject} onChange={(e)=>setForm({...form, subject:e.target.value})} required />
+              </div>
+              <div>
+                <Label>Priority</Label>
+                <select className="w-full border rounded-md h-9 px-3" value={form.priority} onChange={(e)=>setForm({...form, priority:e.target.value})}>
+                  <option value="normal">Normal</option>
+                  <option value="urgent">Urgent</option>
+                  <option value="emergency">Emergency</option>
+                </select>
+              </div>
+              <div>
+                <Label>Message *</Label>
+                <Textarea rows={4} value={form.message} onChange={(e)=>setForm({...form, message:e.target.value})} required />
+              </div>
+              <div className="flex justify-end gap-2">
+                <Button type="submit" disabled={loading}>{loading ? (<><Loader2 className="h-4 w-4 mr-2 animate-spin"/>Sending...</>) : (<><Send className="h-4 w-4 mr-2"/>Send</>)}</Button>
+              </div>
+            </form>
+          </DialogContent>
+        </Dialog>
+      </div>
+
+      <Card className="shadow-soft">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2"><Mail className="h-5 w-5"/> Inbox</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {loading ? (
+            <div className="flex justify-center py-10"><Loader2 className="h-6 w-6 animate-spin"/></div>
+          ) : messages.length === 0 ? (
+            <div className="text-center py-10 text-muted-foreground"><MailOpen className="h-10 w-10 mx-auto mb-2"/>No messages</div>
+          ) : (
+            <div className="space-y-2">
+              {messages.map((m:any)=> (
+                <div key={m._id} className="p-4 border rounded-lg flex items-start justify-between">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      {!m.isRead && <Badge variant="destructive">New</Badge>}
+                      <span className="font-medium">{m.subject}</span>
+                      {m.priority !== 'normal' && (
+                        <Badge variant={m.priority === 'emergency' ? 'destructive' : 'default'}>{m.priority}</Badge>
+                      )}
+                    </div>
+                    <p className="text-sm text-muted-foreground">From: {m.sender?.name} • {new Date(m.createdAt).toLocaleString()}</p>
+                    <p className="text-sm">{m.message}</p>
+                  </div>
+                  {!m.isRead && (
+                    <Button size="sm" variant="outline" onClick={()=>markRead(m._id)}>Mark as read</Button>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
+
+export default NurseMessagesPage;

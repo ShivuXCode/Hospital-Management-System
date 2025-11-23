@@ -1,0 +1,287 @@
+import { useState, useEffect, useRef } from 'react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Search, Send, Loader2, MoreVertical, Phone, Video, Info } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+import { API_URL } from '@/services/api';
+
+const DoctorMessagesPage = () => {
+  const { toast } = useToast();
+  const [loading, setLoading] = useState(false);
+  const [participants, setParticipants] = useState<{ nurses: any[]; admins: any[] }>({ nurses: [], admins: [] });
+  const [activeRoleFilter, setActiveRoleFilter] = useState<'nurses' | 'admins'>('nurses');
+  const [selectedParticipant, setSelectedParticipant] = useState<any>(null);
+  const [conversation, setConversation] = useState<any[]>([]);
+  const [conversationLoading, setConversationLoading] = useState(false);
+  const [messageText, setMessageText] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [doctorInfo, setDoctorInfo] = useState<{ id?: string }>({});
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const fetchParticipants = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch(`${API_URL}/messages/participants`, { headers: { Authorization: `Bearer ${token}` } });
+      const data = await res.json();
+      console.log('📥 Participants response:', data);
+      if (data.success) {
+        setParticipants(data.participants || { nurses: [], admins: [] });
+        if (!selectedParticipant) {
+          const first = data.participants.nurses[0] || data.participants.admins[0];
+          if (first) {
+            setSelectedParticipant(first);
+            fetchConversation(first._id);
+          }
+        }
+      }
+    } catch (e) {
+      console.error('❌ Failed to load participants', e);
+    }
+  };
+
+  const fetchConversation = async (userId: string) => {
+    setConversationLoading(true);
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch(`${API_URL}/messages/conversation/${userId}`, { headers: { Authorization: `Bearer ${token}` } });
+      const data = await res.json();
+      if (data.success) {
+        setConversation(data.messages || []);
+      }
+    } catch (e) {
+      console.error('Failed to load conversation', e);
+    } finally {
+      setConversationLoading(false);
+    }
+  };
+
+  const fetchAppointments = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_URL}/appointments`, { headers: { Authorization: `Bearer ${token}` } });
+      const data = await response.json();
+      if (data.success) setAppointments(data.appointments || []);
+    } catch (error) {
+      console.error('Error fetching appointments:', error);
+    }
+  };
+
+  const fetchDoctorInfo = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_URL}/doctors/me`, { headers: { Authorization: `Bearer ${token}` } });
+      const data = await response.json();
+      if (data.success && data.doctor) {
+        setDoctorInfo({ id: data.doctor._id || data.doctor.id });
+      }
+    } catch (error) {
+      console.error('Error fetching doctor info:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchParticipants();
+    fetchAppointments();
+    fetchDoctorInfo();
+  }, []);
+
+  useEffect(() => {
+    if (!selectedParticipant) return;
+    const interval = setInterval(() => {
+      fetchConversation(selectedParticipant._id);
+    }, 6000);
+    return () => clearInterval(interval);
+  }, [selectedParticipant]);
+
+  const handleSendMessage = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedParticipant) {
+      toast({ title: 'Select recipient', description: 'Choose a participant', variant: 'destructive' });
+      return;
+    }
+    setLoading(true);
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_URL}/messages`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({
+          recipientId: selectedParticipant._id,
+          subject: messageForm.subject,
+          message: messageForm.message,
+          priority: messageForm.priority,
+          relatedAppointment: messageForm.relatedAppointment || undefined,
+        }),
+      });
+      const data = await response.json();
+      if (data.success) {
+        toast({ title: 'Message sent' });
+        setIsSendMessageOpen(false);
+        setMessageForm({ subject: '', message: '', priority: 'normal', relatedAppointment: '' });
+        fetchConversation(selectedParticipant._id);
+      } else {
+        toast({ title: 'Error', description: data.message || 'Failed to send message', variant: 'destructive' });
+      }
+    } catch (error) {
+      toast({ title: 'Error', description: 'Failed to send message', variant: 'destructive' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleMarkAsRead = async (messageId: string) => {
+    try {
+      const token = localStorage.getItem('token');
+      await fetch(`${API_URL}/messages/${messageId}/read`, { method: 'PUT', headers: { Authorization: `Bearer ${token}` } });
+      if (selectedParticipant) fetchConversation(selectedParticipant._id);
+    } catch (error) {
+      console.error('Error marking message as read:', error);
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-3xl font-bold mb-2">Messages</h1>
+        <p className="text-muted-foreground">Communicate with nurses and admins</p>
+      </div>
+
+      <div className="grid lg:grid-cols-3 gap-4">
+        {/* Participants List */}
+        <Card className="shadow-soft lg:col-span-1">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2"><Mail className="h-5 w-5" /> Conversations</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex gap-2 mb-4">
+              {(['nurses', 'admins'] as const).map(role => (
+                <Button key={role} size="sm" variant={activeRoleFilter === role ? 'default' : 'outline'} onClick={() => setActiveRoleFilter(role)}>
+                  {role.charAt(0).toUpperCase() + role.slice(1)}
+                </Button>
+              ))}
+            </div>
+            <div className="space-y-2 max-h-[420px] overflow-y-auto pr-1">
+              {participants[activeRoleFilter].length === 0 ? (
+                <p className="text-sm text-muted-foreground">No {activeRoleFilter} available</p>
+              ) : (
+                participants[activeRoleFilter].map(p => (
+                  <button
+                    key={p._id}
+                    onClick={() => { setSelectedParticipant(p); fetchConversation(p._id); }}
+                    className={`w-full text-left p-3 border rounded-md hover:bg-muted transition-colors ${selectedParticipant?._id === p._id ? 'bg-muted' : ''}`}
+                  >
+                    <div className="font-medium flex items-center justify-between">
+                      <span>{p.name}</span>
+                      <Badge variant="outline" className="text-xs">{p.role}</Badge>
+                    </div>
+                    <p className="text-xs text-muted-foreground truncate">{p.email}</p>
+                  </button>
+                ))
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Conversation Panel */}
+        <Card className="shadow-soft lg:col-span-2">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0">
+            <CardTitle className="flex items-center gap-2">
+              <MailOpen className="h-5 w-5" />
+              {selectedParticipant ? `Conversation with ${selectedParticipant.name}` : 'Select a participant'}
+            </CardTitle>
+            <Dialog open={isSendMessageOpen} onOpenChange={setIsSendMessageOpen}>
+              <DialogTrigger asChild>
+                <Button size="sm" disabled={!selectedParticipant}><Send className="h-4 w-4 mr-2" />New Message</Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-md">
+                <DialogHeader>
+                  <DialogTitle>Send Message</DialogTitle>
+                  <DialogDescription>{selectedParticipant ? `To: ${selectedParticipant.name} (${selectedParticipant.role})` : 'Select a participant first'}</DialogDescription>
+                </DialogHeader>
+                <form onSubmit={handleSendMessage} className="space-y-4">
+                  <div>
+                    <Label>Subject *</Label>
+                    <Input value={messageForm.subject} onChange={e => setMessageForm({ ...messageForm, subject: e.target.value })} required />
+                  </div>
+                  <div>
+                    <Label>Priority</Label>
+                    <Select value={messageForm.priority} onValueChange={v => setMessageForm({ ...messageForm, priority: v })}>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="normal">Normal</SelectItem>
+                        <SelectItem value="urgent">Urgent</SelectItem>
+                        <SelectItem value="emergency">Emergency</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label>Related Appointment (optional)</Label>
+                    <Select value={messageForm.relatedAppointment} onValueChange={v => setMessageForm({ ...messageForm, relatedAppointment: v })}>
+                      <SelectTrigger><SelectValue placeholder="Link appointment" /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="">None</SelectItem>
+                        {appointments.map(apt => (
+                          <SelectItem key={apt._id} value={apt._id}>{new Date(apt.date).toLocaleDateString()} {apt.time} - {apt.patientName}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label>Message *</Label>
+                    <Textarea rows={4} value={messageForm.message} onChange={e => setMessageForm({ ...messageForm, message: e.target.value })} required />
+                  </div>
+                  <div className="flex justify-end gap-2">
+                    <Button type="button" variant="outline" onClick={() => setIsSendMessageOpen(false)}>Cancel</Button>
+                    <Button type="submit" disabled={!selectedParticipant || loading}>
+                      {loading ? (<><Loader2 className="h-4 w-4 mr-2 animate-spin" />Sending...</>) : (<><Send className="h-4 w-4 mr-2" />Send</>)}
+                    </Button>
+                  </div>
+                </form>
+              </DialogContent>
+            </Dialog>
+          </CardHeader>
+          <CardContent>
+            {!selectedParticipant ? (
+              <p className="text-sm text-muted-foreground">Select a participant to view messages.</p>
+            ) : conversationLoading ? (
+              <div className="flex justify-center py-8"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
+            ) : conversation.length === 0 ? (
+              <div className="text-center py-12 text-muted-foreground">
+                <MailOpen className="h-16 w-16 mx-auto mb-4 opacity-50" />
+                <p className="text-lg font-medium">No messages</p>
+                <p className="text-sm mt-1">Start a conversation with {selectedParticipant.name}</p>
+              </div>
+            ) : (
+              <div className="space-y-3 max-h-[520px] overflow-y-auto pr-1">
+                {conversation.map(m => (
+                  <div key={m._id} className={`p-3 border rounded-lg ${m.sender?._id === selectedParticipant._id ? 'bg-muted/50' : 'bg-background'}`}>
+                    <div className="flex items-center gap-2">
+                      {!m.isRead && m.recipient?._id === doctorInfo.id && <Badge variant="destructive">New</Badge>}
+                      <span className="font-medium">{m.subject}</span>
+                      {m.priority !== 'normal' && (<Badge variant={m.priority === 'emergency' ? 'destructive' : 'default'}>{m.priority}</Badge>)}
+                    </div>
+                    <p className="text-xs text-muted-foreground">{m.sender?.name} • {new Date(m.createdAt).toLocaleString()}</p>
+                    <p className="text-sm mt-1 whitespace-pre-wrap">{m.message}</p>
+                    {m.relatedAppointment && (
+                      <p className="text-xs text-muted-foreground mt-1">Appt: {new Date(m.relatedAppointment.date).toLocaleDateString()} {m.relatedAppointment.time} - {m.relatedAppointment.patientName}</p>
+                    )}
+                    {!m.isRead && m.recipient?._id === doctorInfo.id && (
+                      <div className="mt-2">
+                        <Button size="sm" variant="outline" onClick={() => handleMarkAsRead(m._id)}>Mark read</Button>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+};
+
+export default DoctorMessagesPage;
