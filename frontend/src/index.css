@@ -170,6 +170,7 @@ All colors MUST be HSL.
     width: 100%;
     height: 100%;
     cursor: pointer;
+    z-index: 1;
   }
 
   /* Hide spin buttons and clear button */
@@ -213,5 +214,36 @@ All colors MUST be HSL.
   /* Dark mode support */
   .dark input[type="date"] {
     color-scheme: dark;
+  }
+
+  /* Calendar Popup Styling - Theme Matched */
+  input[type="date"]::-webkit-calendar-picker-indicator:hover {
+    background: transparent;
+  }
+}
+
+/* Calendar Popup Theme Styling */
+@layer base {
+  /* Style the calendar popup to match theme */
+  ::-webkit-datetime-edit-fields-wrapper,
+  ::-webkit-datetime-edit-text,
+  ::-webkit-datetime-edit-month-field,
+  ::-webkit-datetime-edit-day-field,
+  ::-webkit-datetime-edit-year-field {
+    color: hsl(var(--foreground));
+  }
+
+  /* Calendar popup container styling */
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    background: transparent;
+    bottom: 0;
+    color: transparent;
+    cursor: pointer;
+    height: auto;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: auto;
   }
 }

@@ -247,8 +247,7 @@ export default function ProfileEdit() {
 
             {/* Date of Birth */}
             <div className="space-y-2">
-              <Label htmlFor="dateOfBirth" className="flex items-center gap-2">
-                <CalendarIcon className="h-4 w-4" />
+              <Label htmlFor="dateOfBirth">
                 Date of Birth
               </Label>
               <DateInput
