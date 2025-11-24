@@ -236,7 +236,8 @@ router.put('/user/profile', authMiddleware, async (req, res) => {
       profileImage,
       patientsTreated,
       publications,
-      awards
+      awards,
+      consultationTypes
     } = req.body;
 
     console.log('📝 Profile Update Request for User ID:', userId);
