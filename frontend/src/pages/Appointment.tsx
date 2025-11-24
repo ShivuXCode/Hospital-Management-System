@@ -158,7 +158,7 @@ const Appointment = () => {
         console.log(`🔄 Fetching doctors for ${formData.consultationType} consultation...`);
         
         const response = await fetch(
-          `http://localhost:5002/api/doctors?consultationType=${formData.consultationType}`
+          `/api/doctors?consultationType=${formData.consultationType}`
         );
         
         const data = await response.json();
@@ -293,7 +293,7 @@ const Appointment = () => {
       setLoadingSlots(true);
       try {
         const response = await fetch(
-          `http://localhost:5002/api/appointments/booked-slots/${encodeURIComponent(formData.doctor)}/${formData.date}`
+          `/api/appointments/booked-slots/${encodeURIComponent(formData.doctor)}/${formData.date}`
         );
         
         const data = await response.json();

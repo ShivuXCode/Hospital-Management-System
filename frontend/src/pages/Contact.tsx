@@ -31,7 +31,7 @@ const Contact = () => {
           setFetchingProfile(true);
           try {
             // Fetch basic user data
-            const userResponse = await fetch('http://localhost:5002/api/user', {
+            const userResponse = await fetch('/api/user', {
               headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`,
               },
@@ -45,7 +45,7 @@ const Contact = () => {
               // If phone not in User model, try fetching from PatientProfile
               if (!phoneNumber && userData.user._id) {
                 try {
-                  const profileResponse = await fetch(`http://localhost:5002/api/patients/${userData.user._id}/profile`, {
+                  const profileResponse = await fetch(`/api/patients/${userData.user._id}/profile`, {
                     headers: {
                       'Authorization': `Bearer ${localStorage.getItem('token')}`,
                     },
@@ -107,7 +107,7 @@ const Contact = () => {
 
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:5002/api/contact', {
+      const response = await fetch('/api/contact', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

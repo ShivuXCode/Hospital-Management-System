@@ -46,7 +46,7 @@ export default function DoctorProfilePage() {
         return;
       }
 
-      const response = await fetch('http://localhost:5002/api/user', {
+      const response = await fetch('/api/user', {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',

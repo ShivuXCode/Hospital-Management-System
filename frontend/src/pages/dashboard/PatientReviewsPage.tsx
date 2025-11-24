@@ -39,7 +39,7 @@ const PatientReviewsPage = () => {
 
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:5002/api/doctors/reviewable-appointments', {
+      const response = await fetch('/api/doctors/reviewable-appointments', {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
           'Content-Type': 'application/json',
@@ -89,7 +89,7 @@ const PatientReviewsPage = () => {
       setSubmittingReview(true);
       const doctorId = selectedAppointment.doctor?._id || selectedAppointment.doctor;
       
-      const response = await fetch(`http://localhost:5002/api/doctors/${doctorId}/reviews`, {
+      const response = await fetch(`/api/doctors/${doctorId}/reviews`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,

@@ -54,7 +54,7 @@ const AdminContactMessagesPage = () => {
   const fetchMessages = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:5002/api/contact', {
+      const response = await fetch('/api/contact', {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
         },
@@ -80,7 +80,7 @@ const AdminContactMessagesPage = () => {
   const handleStatusUpdate = async (messageId: string, status: 'pending' | 'resolved') => {
     setUpdating(true);
     try {
-      const response = await fetch(`http://localhost:5002/api/contact/${messageId}`, {
+      const response = await fetch(`/api/contact/${messageId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -117,7 +117,7 @@ const AdminContactMessagesPage = () => {
     if (!confirm('Are you sure you want to delete this message?')) return;
 
     try {
-      const response = await fetch(`http://localhost:5002/api/contact/${messageId}`, {
+      const response = await fetch(`/api/contact/${messageId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
