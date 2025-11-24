@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { DateInput } from '@/components/ui/date-input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
@@ -246,17 +247,17 @@ export default function ProfileEdit() {
 
             {/* Date of Birth */}
             <div className="space-y-2">
-              <Label htmlFor="dateOfBirth">
-                <CalendarIcon className="h-4 w-4 inline mr-2" />
+              <Label htmlFor="dateOfBirth" className="flex items-center gap-2">
+                <CalendarIcon className="h-4 w-4" />
                 Date of Birth
               </Label>
-              <Input
+              <DateInput
                 id="dateOfBirth"
                 name="dateOfBirth"
-                type="date"
                 value={formData.dateOfBirth}
                 onChange={handleInputChange}
                 max={new Date().toISOString().split('T')[0]}
+                placeholder="Select your date of birth"
               />
             </div>
 

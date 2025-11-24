@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { DateInput } from '@/components/ui/date-input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
@@ -672,14 +673,15 @@ const DoctorPrescriptionsPage = () => {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="validUntil">Valid Until *</Label>
-                  <Input
+                  <DateInput
                     id="validUntil"
-                    type="date"
                     required
                     value={prescriptionForm.validUntil}
                     onChange={(e) =>
                       setPrescriptionForm({ ...prescriptionForm, validUntil: e.target.value })
                     }
+                    min={new Date().toISOString().split('T')[0]}
+                    placeholder="Select expiry date"
                   />
                 </div>
               </div>

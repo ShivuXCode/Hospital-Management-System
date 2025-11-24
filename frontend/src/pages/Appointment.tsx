@@ -5,6 +5,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { DateInput } from '@/components/ui/date-input';
 import { Textarea } from '@/components/ui/textarea';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
@@ -538,8 +539,7 @@ const Appointment = () => {
                   <label className="text-sm font-medium mb-2 block">
                     {t('appointment.date')} *
                   </label>
-                  <Input
-                    type="date"
+                  <DateInput
                     value={formData.date}
                     onChange={(e) => {
                       setFormData({ ...formData, date: e.target.value });
@@ -547,6 +547,7 @@ const Appointment = () => {
                     }}
                     min={new Date().toISOString().split('T')[0]}
                     required
+                    placeholder="Select appointment date"
                   />
                 </div>
 

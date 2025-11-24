@@ -145,3 +145,54 @@ All colors MUST be HSL.
     box-shadow: var(--shadow-strong);
   }
 }
+
+/* Enhanced Date Picker Styles */
+@layer components {
+  /* Modern Date Input Styling */
+  input[type="date"] {
+    @apply transition-all duration-200;
+  }
+  
+  input[type="date"]:hover {
+    @apply border-primary/50;
+  }
+  
+  input[type="date"]:focus {
+    @apply border-primary shadow-sm;
+  }
+
+  /* Calendar Picker Icon Styling */
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    @apply cursor-pointer opacity-70 hover:opacity-100 transition-opacity;
+  }
+
+  /* Date Input Text Styling */
+  input[type="date"]::-webkit-datetime-edit {
+    @apply text-foreground;
+  }
+  
+  input[type="date"]::-webkit-datetime-edit-fields-wrapper {
+    @apply px-1;
+  }
+  
+  input[type="date"]::-webkit-datetime-edit-text {
+    @apply text-muted-foreground px-0.5;
+  }
+  
+  input[type="date"]::-webkit-datetime-edit-month-field,
+  input[type="date"]::-webkit-datetime-edit-day-field,
+  input[type="date"]::-webkit-datetime-edit-year-field {
+    @apply px-1 py-0.5 rounded hover:bg-primary/10 transition-colors;
+  }
+  
+  input[type="date"]::-webkit-datetime-edit-month-field:focus,
+  input[type="date"]::-webkit-datetime-edit-day-field:focus,
+  input[type="date"]::-webkit-datetime-edit-year-field:focus {
+    @apply bg-primary/20 outline-none;
+  }
+
+  /* Placeholder styling when empty */
+  input[type="date"]:invalid::-webkit-datetime-edit {
+    @apply text-muted-foreground/50;
+  }
+}
