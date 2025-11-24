@@ -256,6 +256,7 @@ export default function ProfileEdit() {
                 type="date"
                 value={formData.dateOfBirth}
                 onChange={handleInputChange}
+                max={new Date().toISOString().split('T')[0]}
               />
             </div>
 
