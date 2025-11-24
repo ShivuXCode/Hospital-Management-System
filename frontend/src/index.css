@@ -173,6 +173,24 @@ All colors MUST be HSL.
     z-index: 1;
   }
 
+  /* Firefox: hide native calendar icon but keep clickable area */
+  input[type="date"]::-moz-calendar-picker-indicator {
+    opacity: 0;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+  }
+
+  /* Normalize browser appearance so borders and paddings are consistent */
+  input[type="date"] {
+    appearance: textfield;
+    -webkit-appearance: none;
+    -moz-appearance: textfield;
+    background-image: none !important;
+  }
+
   /* Hide spin buttons and clear button */
   input[type="date"]::-webkit-inner-spin-button,
   input[type="date"]::-webkit-clear-button {
@@ -245,5 +263,12 @@ All colors MUST be HSL.
     right: 0;
     top: 0;
     width: auto;
+  }
+
+  /* Firefox-specific: ensure only our custom icon is visible */
+  @-moz-document url-prefix() {
+    .date-input .date-input-icon { display: inline-block; }
+    /* Hide Firefox's calendar button visually */
+    input[type="date"]::-moz-calendar-picker-indicator { opacity: 0; }
   }
 }

@@ -9,8 +9,10 @@ export interface DateInputProps
 
 const DateInput = React.forwardRef<HTMLInputElement, DateInputProps>(
   ({ className, label, ...props }, ref) => {
+    const innerRef = React.useRef<HTMLInputElement>(null)
+    React.useImperativeHandle(ref, () => innerRef.current as HTMLInputElement)
     return (
-      <div className="relative w-full">
+      <div className="relative w-full date-input">
         <input
           type="date"
           className={cn(
@@ -29,10 +31,14 @@ const DateInput = React.forwardRef<HTMLInputElement, DateInputProps>(
             "[&::-webkit-clear-button]:hidden",
             className
           )}
-          ref={ref}
+          ref={innerRef}
+          onClick={(e) => {
+            // Ensure calendar opens when clicking anywhere in the input
+            ;(e.currentTarget as HTMLInputElement).showPicker?.()
+          }}
           {...props}
         />
-        <CalendarIcon className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-primary/70 pointer-events-none z-5" />
+        <CalendarIcon aria-hidden="true" className="date-input-icon absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-primary/70 pointer-events-none z-20" />
       </div>
     )
   }
