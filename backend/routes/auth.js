@@ -214,10 +214,10 @@ router.get('/user', authMiddleware, async (req, res) => {
   }
 });
 
-// @route   PUT /api/user/profile
+// @route   PUT /api/user
 // @desc    Update current user profile
 // @access  Private
-router.put('/user/profile', authMiddleware, async (req, res) => {
+router.put('/user', authMiddleware, async (req, res) => {
   try {
     const userId = req.user.id;
     const {

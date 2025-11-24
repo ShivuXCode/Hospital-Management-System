@@ -46,7 +46,7 @@ export default function ProfileEdit() {
     const fetchUserProfile = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await fetch('http://localhost:5002/api/user/profile', {
+        const response = await fetch('http://localhost:5002/api/user', {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
@@ -99,7 +99,7 @@ export default function ProfileEdit() {
 
       // Update profile via API
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5002/api/user/profile', {
+      const response = await fetch('http://localhost:5002/api/user', {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
