@@ -2,7 +2,6 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { DateInput } from '@/components/ui/date-input';
 import { Badge } from '@/components/ui/badge';
 import {
   Dialog,
@@ -1353,7 +1352,7 @@ const AdminDashboard = () => {
             </CardHeader>
             <CardContent>
               <div className="mb-4 flex gap-2">
-                <DateInput className="w-[180px]" placeholder="Filter by date" />
+                <Input type="date" className="w-[180px]" />
                 <Input placeholder="Search by patient..." className="flex-1" />
                 <Select defaultValue="all">
                   <SelectTrigger className="w-[150px]">
