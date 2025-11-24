@@ -151,6 +151,7 @@ All colors MUST be HSL.
   /* Modern Date Input Styling */
   input[type="date"] {
     @apply transition-all duration-200;
+    color-scheme: light;
   }
   
   input[type="date"]:hover {
@@ -161,14 +162,27 @@ All colors MUST be HSL.
     @apply border-primary shadow-sm;
   }
 
-  /* Calendar Picker Icon Styling */
+  /* Hide native calendar icon completely */
   input[type="date"]::-webkit-calendar-picker-indicator {
-    @apply cursor-pointer opacity-70 hover:opacity-100 transition-opacity;
+    opacity: 0;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+  }
+
+  /* Hide spin buttons and clear button */
+  input[type="date"]::-webkit-inner-spin-button,
+  input[type="date"]::-webkit-clear-button {
+    display: none;
+    -webkit-appearance: none;
   }
 
   /* Date Input Text Styling */
   input[type="date"]::-webkit-datetime-edit {
     @apply text-foreground;
+    padding: 0;
   }
   
   input[type="date"]::-webkit-datetime-edit-fields-wrapper {
@@ -182,7 +196,7 @@ All colors MUST be HSL.
   input[type="date"]::-webkit-datetime-edit-month-field,
   input[type="date"]::-webkit-datetime-edit-day-field,
   input[type="date"]::-webkit-datetime-edit-year-field {
-    @apply px-1 py-0.5 rounded hover:bg-primary/10 transition-colors;
+    @apply px-1.5 py-0.5 rounded-sm hover:bg-primary/10 transition-colors;
   }
   
   input[type="date"]::-webkit-datetime-edit-month-field:focus,
@@ -194,5 +208,10 @@ All colors MUST be HSL.
   /* Placeholder styling when empty */
   input[type="date"]:invalid::-webkit-datetime-edit {
     @apply text-muted-foreground/50;
+  }
+
+  /* Dark mode support */
+  .dark input[type="date"] {
+    color-scheme: dark;
   }
 }
