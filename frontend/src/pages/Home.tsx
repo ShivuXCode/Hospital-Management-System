@@ -23,7 +23,7 @@ const Home = () => {
     { icon: Users, value: '50,000+', label: t('dashboard.patients') },
     { icon: Stethoscope, value: '150+', label: t('dashboard.doctors') },
     { icon: Building2, value: '30+', label: t('departments.title') },
-    { icon: Award, value: '25+', label: 'Years Experience' },
+    { icon: Award, value: '25+', label: t('home.stats.experience') },
   ];
 
   const services = [
@@ -120,9 +120,7 @@ const Home = () => {
                 {t('about.description')}
               </p>
               <p className="text-muted-foreground mb-8 leading-relaxed">
-                With state-of-the-art medical equipment, experienced healthcare professionals, 
-                and a patient-first approach, we ensure the highest standards of medical care 
-                for every individual who walks through our doors.
+                {t('home.about.extra')}
               </p>
               <Button asChild variant="outline" size="lg">
                 <Link to="/about">
@@ -149,7 +147,7 @@ const Home = () => {
               {t('services.title')}
             </h2>
             <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              Comprehensive healthcare services designed to meet all your medical needs
+              {t('services.subtitle')}
             </p>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -180,10 +178,10 @@ const Home = () => {
               <Card className="gradient-hero text-white shadow-strong">
                 <CardContent className="p-12 text-center">
                   <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                    Ready to Get Started?
+                    {t('home.cta.title')}
                   </h2>
                   <p className="text-lg mb-8 opacity-90 max-w-2xl mx-auto">
-                    Book your appointment today and experience quality healthcare
+                    {t('home.cta.subtitle')}
                   </p>
                   <div className="flex flex-col sm:flex-row gap-4 justify-center">
                     <BookAppointmentButton size="lg" variant="secondary">

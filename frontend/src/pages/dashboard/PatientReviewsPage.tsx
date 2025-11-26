@@ -9,10 +9,12 @@ import { Star, MessageSquare, Loader2, Calendar, Stethoscope } from 'lucide-reac
 import { useNavigate } from 'react-router-dom';
 import { apiService } from '@/services/api';
 import { useToast } from '@/hooks/use-toast';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const PatientReviewsPage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { t } = useLanguage();
   const [reviewableAppointments, setReviewableAppointments] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [showReviewModal, setShowReviewModal] = useState(false);
@@ -29,8 +31,8 @@ const PatientReviewsPage = () => {
     const user = apiService.getUser();
     if (!user || user.role !== 'Patient') {
       toast({
-        title: 'Access denied',
-        description: 'This page is only available to patients.',
+        title: t('patientReviews.toast.accessDeniedTitle'),
+        description: t('patientReviews.toast.accessDeniedDesc'),
         variant: 'destructive',
       });
       navigate('/dashboard');
@@ -52,8 +54,8 @@ const PatientReviewsPage = () => {
     } catch (error) {
       console.error('Failed to load reviewable appointments:', error);
       toast({
-        title: 'Error',
-        description: 'Failed to load appointments.',
+        title: t('patientBilling.toast.errorTitle'),
+        description: t('patientBilling.toast.errorDesc'),
         variant: 'destructive',
       });
     } finally {
@@ -78,8 +80,8 @@ const PatientReviewsPage = () => {
   const handleSubmitReview = async () => {
     if (!selectedAppointment || reviewForm.rating === 0) {
       toast({
-        title: 'Invalid rating',
-        description: 'Please select a star rating before submitting.',
+        title: t('patientReviews.toast.invalidRatingTitle'),
+        description: t('patientReviews.toast.invalidRatingDesc'),
         variant: 'destructive',
       });
       return;
@@ -107,22 +109,24 @@ const PatientReviewsPage = () => {
       if (data.success) {
         toast({
           title: 'Success',
-          description: selectedAppointment.hasReview ? 'Review updated successfully!' : 'Review submitted successfully!',
+          description: selectedAppointment.hasReview
+            ? t('patientReviews.toast.successUpdate')
+            : t('patientReviews.toast.successNew'),
         });
         setShowReviewModal(false);
         setReviewForm({ rating: 0, comment: '' });
         loadReviewableAppointments();
       } else {
         toast({
-          title: 'Error',
-          description: data.message || 'Failed to submit review',
+          title: t('patientBilling.toast.errorTitle'),
+          description: data.message || t('patientReviews.toast.error'),
           variant: 'destructive',
         });
       }
     } catch (error) {
       toast({
-        title: 'Error',
-        description: 'Failed to submit review. Please try again.',
+        title: t('patientBilling.toast.errorTitle'),
+        description: t('patientReviews.toast.error'),
         variant: 'destructive',
       });
     } finally {
@@ -133,8 +137,8 @@ const PatientReviewsPage = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold mb-2">Rate & Review Doctors</h1>
-        <p className="text-muted-foreground">Share your experience with doctors you've visited</p>
+        <h1 className="text-3xl font-bold mb-2">{t('patientReviews.title')}</h1>
+        <p className="text-muted-foreground">{t('patientReviews.subtitle')}</p>
       </div>
 
       {loading ? (
@@ -145,9 +149,9 @@ const PatientReviewsPage = () => {
         <Card className="shadow-soft">
           <CardContent className="flex flex-col items-center justify-center py-12">
             <Star className="h-16 w-16 text-muted-foreground/50 mb-4" />
-            <h3 className="text-lg font-semibold mb-2">No Completed Appointments</h3>
+            <h3 className="text-lg font-semibold mb-2">{t('patientReviews.empty.title')}</h3>
             <p className="text-muted-foreground text-center max-w-md">
-              You don't have any completed appointments to review yet. After your appointment is completed, you'll be able to rate and review your doctor here.
+              {t('patientReviews.empty.desc')}
             </p>
           </CardContent>
         </Card>
@@ -179,7 +183,7 @@ const PatientReviewsPage = () => {
                     onClick={() => handleOpenReviewModal(apt)}
                   >
                     <MessageSquare className="h-4 w-4 mr-2" />
-                    {apt.hasReview ? 'Edit Review' : 'Write Review'}
+                    {apt.hasReview ? t('patientReviews.button.edit') : t('patientReviews.button.write')}
                   </Button>
                 </div>
               </CardHeader>
@@ -200,8 +204,8 @@ const PatientReviewsPage = () => {
                 {apt.hasReview && apt.review && (
                   <div className="mt-4 p-4 bg-muted rounded-lg">
                     <div className="flex items-center justify-between mb-2">
-                      <Label className="text-sm font-medium">Your Review</Label>
-                      <Badge variant="secondary">Reviewed</Badge>
+                      <Label className="text-sm font-medium">{t('patientReviews.review.label')}</Label>
+                      <Badge variant="secondary">{t('patientReviews.review.badge')}</Badge>
                     </div>
                     <div className="flex items-center gap-2 mb-2">
                       {[1, 2, 3, 4, 5].map((star) => (
@@ -232,15 +236,16 @@ const PatientReviewsPage = () => {
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>
-              {selectedAppointment?.hasReview ? 'Edit Your Review' : 'Write a Review'}
+              {selectedAppointment?.hasReview ? t('patientReviews.modal.editTitle') : t('patientReviews.modal.newTitle')}
             </DialogTitle>
             <DialogDescription>
-              Share your experience with Dr. {selectedAppointment?.doctor?.name || selectedAppointment?.doctorName}
+              {t('patientReviews.modal.subtitle')}{' '}
+              {t('patientPrescriptions.doctorPrefix')} {selectedAppointment?.doctor?.name || selectedAppointment?.doctorName}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label>Rating *</Label>
+              <Label>{t('patientReviews.modal.ratingLabel')}</Label>
               <div className="flex items-center gap-2">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <button
@@ -264,10 +269,10 @@ const PatientReviewsPage = () => {
               </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="review-comment">Your Review (Optional)</Label>
+              <Label htmlFor="review-comment">{t('patientReviews.modal.reviewLabel')}</Label>
               <Textarea
                 id="review-comment"
-                placeholder="Share details about your experience..."
+                placeholder={t('patientReviews.modal.reviewPlaceholder')}
                 rows={4}
                 value={reviewForm.comment}
                 onChange={(e) => setReviewForm({ ...reviewForm, comment: e.target.value })}
@@ -287,16 +292,16 @@ const PatientReviewsPage = () => {
               }}
               disabled={submittingReview}
             >
-              Cancel
+              {t('common.cancel')}
             </Button>
             <Button onClick={handleSubmitReview} disabled={submittingReview || reviewForm.rating === 0}>
               {submittingReview ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Submitting...
+                  {t('common.loading')}
                 </>
               ) : (
-                selectedAppointment?.hasReview ? 'Update Review' : 'Submit Review'
+                selectedAppointment?.hasReview ? t('patientReviews.modal.updateButton') : t('patientReviews.modal.submitButton')
               )}
             </Button>
           </div>

@@ -125,8 +125,8 @@ const PatientHealthRecords = () => {
       const user = apiService.getUser();
       if (!user) {
         toast({
-          title: 'Error',
-          description: 'User not found. Please login again.',
+          title: t('patientHealth.toast.errorTitle'),
+          description: t('patientHealth.toast.errorDesc'),
           variant: 'destructive',
         });
         return;
@@ -157,16 +157,16 @@ const PatientHealthRecords = () => {
       setHealthData(merged);
 
       toast({
-        title: 'Health Records Updated',
-        description: 'Your health information has been saved successfully and synced with your dashboard.',
+        title: t('patientHealth.toast.updatedTitle'),
+        description: t('patientHealth.toast.updatedDesc'),
       });
       setEditing(false);
 
       window.dispatchEvent(new Event('patient-health-updated'));
     } catch (error) {
       toast({
-        title: 'Error',
-        description: 'Failed to update health records',
+        title: t('patientHealth.toast.errorTitle'),
+        description: t('patientHealth.toast.errorDesc'),
         variant: 'destructive',
       });
     }
@@ -175,33 +175,33 @@ const PatientHealthRecords = () => {
   const healthStats = [
     {
       icon: TrendingUp,
-      label: 'Height',
-      value: healthData.height ? `${healthData.height} cm` : 'Not set',
+      label: t('patientHealth.cards.height'),
+      value: healthData.height ? `${healthData.height} cm` : t('patientHealth.notSet'),
       field: 'height' as keyof HealthRecord,
     },
     {
       icon: Activity,
-      label: 'Weight',
-      value: healthData.weight ? `${healthData.weight} kg` : 'Not set',
+      label: t('patientHealth.cards.weight'),
+      value: healthData.weight ? `${healthData.weight} kg` : t('patientHealth.notSet'),
       field: 'weight' as keyof HealthRecord,
     },
     {
       icon: Heart,
-      label: 'Blood Pressure',
-      value: healthData.bloodPressure || 'Not set',
+      label: t('patientHealth.cards.bloodPressure'),
+      value: healthData.bloodPressure || t('patientHealth.notSet'),
       field: 'bloodPressure' as keyof HealthRecord,
-      placeholder: 'e.g., 120/80',
+      placeholder: t('patientHealth.placeholder.bloodPressure'),
     },
     {
       icon: Droplet,
-      label: 'Blood Sugar',
-      value: healthData.bloodSugar ? `${healthData.bloodSugar} mg/dL` : 'Not set',
+      label: t('patientHealth.cards.bloodSugar'),
+      value: healthData.bloodSugar ? `${healthData.bloodSugar} mg/dL` : t('patientHealth.notSet'),
       field: 'bloodSugar' as keyof HealthRecord,
     },
     {
       icon: Heart,
-      label: 'Heart Rate',
-      value: healthData.heartRate ? `${healthData.heartRate} bpm` : 'Not set',
+      label: t('patientHealth.cards.heartRate'),
+      value: healthData.heartRate ? `${healthData.heartRate} bpm` : t('patientHealth.notSet'),
       field: 'heartRate' as keyof HealthRecord,
     },
   ];
@@ -210,8 +210,8 @@ const PatientHealthRecords = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold mb-2">Health Records</h1>
-          <p className="text-muted-foreground">Track and manage your health vitals</p>
+          <h1 className="text-3xl font-bold mb-2">{t('patientHealth.title')}</h1>
+          <p className="text-muted-foreground">{t('patientHealth.subtitle')}</p>
         </div>
         <Button
           onClick={() => (editing ? handleSave() : setEditing(true))}
@@ -220,12 +220,12 @@ const PatientHealthRecords = () => {
           {editing ? (
             <>
               <Save className="h-4 w-4 mr-2" />
-              Save Changes
+              {t('patientHealth.button.save')}
             </>
           ) : (
             <>
               <Edit2 className="h-4 w-4 mr-2" />
-              Edit Records
+              {t('patientHealth.button.edit')}
             </>
           )}
         </Button>
@@ -238,7 +238,7 @@ const PatientHealthRecords = () => {
               <div className="flex items-center gap-3">
                 <Activity className="h-5 w-5 text-primary" />
                 <div>
-                  <p className="text-sm text-muted-foreground">Body Mass Index (BMI)</p>
+                  <p className="text-sm text-muted-foreground">{t('patientHealth.bmiLabel')}</p>
                   <p className="text-2xl font-bold">{healthData.bmi}</p>
                 </div>
               </div>
@@ -265,7 +265,14 @@ const PatientHealthRecords = () => {
                       type="text"
                       value={healthData[stat.field]}
                       onChange={(e) => handleInputChange(stat.field, e.target.value)}
-                      placeholder={stat.placeholder || `Enter ${stat.label.toLowerCase()}`}
+                      placeholder={(() => {
+                        if (stat.placeholder) return stat.placeholder;
+                        if (stat.field === 'height') return t('patientHealth.placeholder.height');
+                        if (stat.field === 'weight') return t('patientHealth.placeholder.weight');
+                        if (stat.field === 'bloodSugar') return t('patientHealth.placeholder.bloodSugar');
+                        if (stat.field === 'heartRate') return t('patientHealth.placeholder.heartRate');
+                        return '';
+                      })()}
                       className="mt-1"
                     />
                   </div>
@@ -280,7 +287,7 @@ const PatientHealthRecords = () => {
 
       {healthData.lastUpdated && (
         <p className="text-sm text-muted-foreground text-center">
-          Last updated{' '}
+          {t('patientHealth.lastUpdated')}{' '}
           {new Date(healthData.lastUpdated).toLocaleDateString('en-US', {
             year: 'numeric',
             month: 'long',

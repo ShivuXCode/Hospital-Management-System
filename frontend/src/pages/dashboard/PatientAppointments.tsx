@@ -80,9 +80,14 @@ const PatientAppointments = () => {
             mapped.forEach(m => {
               const prev = prevStatusRef.current[m._id];
               if (prev && prev !== 'Confirmed' && m.status === 'Confirmed') {
+                const formattedDate = m.date ? new Date(m.date).toLocaleDateString(undefined, {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                }) : '';
                 toast({
-                  title: 'Appointment Confirmed',
-                  description: `Your appointment with ${m.doctorName} on ${new Date(m.date).toLocaleDateString()} at ${m.time} is confirmed.`,
+                  title: t('patientAppointments.toast.confirmedTitle'),
+                  description: `${t('patientAppointments.toast.confirmedWith')} ${m.doctorName} ${t('patientAppointments.toast.on')} ${formattedDate} ${t('patientAppointments.toast.at')} ${m.time} ${t('patientAppointments.toast.confirmedSuffix')}`,
                 });
               }
             });
@@ -98,8 +103,8 @@ const PatientAppointments = () => {
       } catch (error) {
         console.error('Failed to load appointments:', error);
         toast({
-          title: 'Error',
-          description: 'Failed to load appointments',
+          title: t('patientBilling.toast.errorTitle'),
+          description: t('patientAppointments.empty.noneDesc'),
           variant: 'destructive',
         });
       } finally {
@@ -129,6 +134,13 @@ const PatientAppointments = () => {
     [activeAppointments, expiredAppointments, showExpired]
   );
 
+  const translateStatus = (status: string) => {
+    const normalized = status.toLowerCase();
+    const key = `patientAppointments.status.${normalized}`;
+    const translated = t(key);
+    return translated === key ? status : translated;
+  };
+
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
       case 'confirmed':
@@ -148,8 +160,8 @@ const PatientAppointments = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold mb-2">My Appointments</h1>
-          <p className="text-muted-foreground">View and manage your medical appointments</p>
+          <h1 className="text-3xl font-bold mb-2">{t('patientAppointments.title')}</h1>
+          <p className="text-muted-foreground">{t('patientAppointments.subtitle')}</p>
         </div>
         <div className="flex gap-3">
           <Button
@@ -157,11 +169,11 @@ const PatientAppointments = () => {
             onClick={() => setShowExpired((prev) => !prev)}
             aria-pressed={showExpired}
           >
-            {showExpired ? 'Show Active' : 'Show Expired'}
+            {showExpired ? t('patientAppointments.toggle.showActive') : t('patientAppointments.toggle.showExpired')}
           </Button>
           <Button onClick={() => navigate('/book-appointment')} className="gradient-primary">
             <Calendar className="h-4 w-4 mr-2" />
-            Book New Appointment
+            {t('patientAppointments.bookNew')}
           </Button>
         </div>
       </div>
@@ -193,7 +205,7 @@ const PatientAppointments = () => {
                     )}
                   </div>
                   <Badge className={getStatusColor(appointment.status)}>
-                    {appointment.status}
+                    {translateStatus(appointment.status)}
                   </Badge>
                 </div>
               </CardHeader>
@@ -217,13 +229,13 @@ const PatientAppointments = () => {
                 </div>
                 {appointment.reason && (
                   <div className="mt-4 p-3 bg-muted rounded-lg">
-                    <p className="text-sm font-medium mb-1">Reason for Visit:</p>
+                    <p className="text-sm font-medium mb-1">{t('patientAppointments.reasonLabel')}</p>
                     <p className="text-sm text-muted-foreground">{appointment.reason}</p>
                   </div>
                 )}
                 {isExpired(appointment) && (
                   <div className="mt-4">
-                    <Badge variant="secondary">Expired</Badge>
+                    <Badge variant="secondary">{t('patientAppointments.expiredBadge')}</Badge>
                   </div>
                 )}
               </CardContent>
@@ -237,26 +249,26 @@ const PatientAppointments = () => {
               <Calendar className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
               {!showExpired && expiredAppointments.length === 0 ? (
                 <>
-                  <h3 className="text-xl font-semibold mb-2">No Appointments Found</h3>
-                  <p className="text-muted-foreground">No appointments found.</p>
+                  <h3 className="text-xl font-semibold mb-2">{t('patientAppointments.empty.none')}</h3>
+                  <p className="text-muted-foreground">{t('patientAppointments.empty.noneDesc')}</p>
                 </>
               ) : !showExpired && expiredAppointments.length > 0 ? (
                 <>
-                  <h3 className="text-xl font-semibold mb-2">No Active Appointments</h3>
+                  <h3 className="text-xl font-semibold mb-2">{t('patientAppointments.empty.noActive')}</h3>
                   <p className="text-muted-foreground">
-                    You currently don’t have any upcoming appointments.
+                    {t('patientAppointments.empty.noActiveDesc')}
                   </p>
                 </>
               ) : (
                 <>
-                  <h3 className="text-xl font-semibold mb-2">No Expired Appointments</h3>
-                  <p className="text-muted-foreground">No expired appointments found.</p>
+                  <h3 className="text-xl font-semibold mb-2">{t('patientAppointments.empty.noExpired')}</h3>
+                  <p className="text-muted-foreground">{t('patientAppointments.empty.noExpiredDesc')}</p>
                 </>
               )}
             </div>
             {!showExpired && expiredAppointments.length === 0 && (
               <Button onClick={() => navigate('/book-appointment')} className="gradient-primary">
-                Book Your First Appointment
+                {t('patientAppointments.empty.bookFirst')}
               </Button>
             )}
           </CardContent>

@@ -152,14 +152,27 @@ const DoctorBillingPage = () => {
       
       if (data.success) {
         setAvailablePatients(data.patients || []);
+      } else {
+        setAvailablePatients([]);
+        toast({
+          title: 'Error',
+          description: data.message || 'Unable to load patients',
+          variant: 'destructive'
+        });
       }
     } catch (error) {
       console.error('Error fetching patients:', error);
+      setAvailablePatients([]);
+      toast({
+        title: 'Error',
+        description: 'Unable to load patients',
+        variant: 'destructive'
+      });
     }
   };
 
-  const handleOpenCreateBillDialog = () => {
-    fetchAvailablePatients();
+  const handleOpenCreateBillDialog = async () => {
+    await fetchAvailablePatients();
     setSelectedPatientId('');
     setNewConsultationFee('');
     setNewBillNotes('');
@@ -190,8 +203,6 @@ const DoctorBillingPage = () => {
         },
         body: JSON.stringify({
           patientId: selectedPatient._id,
-          patientName: selectedPatient.name,
-          patientEmail: selectedPatient.email,
           consultationFee: Number(newConsultationFee) || 0,
           notes: newBillNotes
         })
@@ -417,15 +428,19 @@ const DoctorBillingPage = () => {
           <DialogHeader>
             <DialogTitle>Create New Bill</DialogTitle>
             <DialogDescription>
-              Create a manual bill for a patient
+              Create a manual bill for a patient you have already treated
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
               <Label htmlFor="patient">Patient *</Label>
-              <Select value={selectedPatientId} onValueChange={setSelectedPatientId}>
+              <Select
+                value={selectedPatientId}
+                onValueChange={setSelectedPatientId}
+                disabled={availablePatients.length === 0}
+              >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select a patient" />
+                  <SelectValue placeholder={availablePatients.length === 0 ? 'No eligible patients found' : 'Select a patient'} />
                 </SelectTrigger>
                 <SelectContent>
                   {availablePatients.map((patient) => (
@@ -435,6 +450,11 @@ const DoctorBillingPage = () => {
                   ))}
                 </SelectContent>
               </Select>
+              {availablePatients.length === 0 && (
+                <p className="text-xs text-muted-foreground">
+                  You can only create bills for patients you have treated. Complete an appointment to see it here.
+                </p>
+              )}
             </div>
             <div className="space-y-2">
               <Label htmlFor="doctor-consultation-fee">Consultation Fee ($)</Label>

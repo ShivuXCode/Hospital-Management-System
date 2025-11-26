@@ -30,7 +30,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { 
+import type { LucideIcon } from 'lucide-react';
+import {
   Activity, 
   LayoutDashboard, 
   Users, 
@@ -63,6 +64,13 @@ interface DashboardLayoutProps {
   children: ReactNode;
   role: 'admin' | 'doctor' | 'nurse' | 'patient';
   hideTopNav?: boolean;
+}
+
+interface MenuItem {
+  icon: LucideIcon;
+  labelKey: string;
+  path: string;
+  hash?: string;
 }
 
 export const DashboardLayout = ({ children, role, hideTopNav = false }: DashboardLayoutProps) => {
@@ -98,45 +106,45 @@ export const DashboardLayout = ({ children, role, hideTopNav = false }: Dashboar
     fetchDoctorProfile();
   }, [role]);
 
-  const menuItems = {
+  const menuItems: Record<DashboardLayoutProps['role'], MenuItem[]> = {
     admin: [
-      { icon: HomeIcon, label: 'Home', path: '/' },
-      { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard/admin' },
-      { icon: UserCog, label: 'Manage Doctors', path: '/dashboard/admin/doctors' },
-      { icon: Users, label: 'Manage Nurses', path: '/dashboard/admin/nurses' },
-      { icon: Users, label: 'Manage Patients', path: '/dashboard/admin/patients' },
-      { icon: DollarSign, label: 'Billing', path: '/dashboard/admin/billing' },
-      { icon: Package, label: 'Inventory', path: '/dashboard/admin/inventory' },
-      { icon: Cpu, label: 'IoT Devices', path: '/dashboard/admin/iot-devices' },
-      { icon: Mail, label: 'Messages', path: '/dashboard/admin/messages' },
-      { icon: Mail, label: 'Contact Messages', path: '/dashboard/admin/contact-messages' },
-      { icon: FileText, label: 'Analytics', path: '/dashboard/admin/analytics' },
+      { icon: HomeIcon, labelKey: 'dashboard.menu.home', path: '/' },
+      { icon: LayoutDashboard, labelKey: 'dashboard.menu.dashboard', path: '/dashboard/admin' },
+      { icon: UserCog, labelKey: 'dashboard.menu.manageDoctors', path: '/dashboard/admin/doctors' },
+      { icon: Users, labelKey: 'dashboard.menu.manageNurses', path: '/dashboard/admin/nurses' },
+      { icon: Users, labelKey: 'dashboard.menu.managePatients', path: '/dashboard/admin/patients' },
+      { icon: DollarSign, labelKey: 'dashboard.menu.billing', path: '/dashboard/admin/billing' },
+      { icon: Package, labelKey: 'dashboard.menu.inventory', path: '/dashboard/admin/inventory' },
+      { icon: Cpu, labelKey: 'dashboard.menu.iotDevices', path: '/dashboard/admin/iot-devices' },
+      { icon: Mail, labelKey: 'dashboard.menu.messages', path: '/dashboard/admin/messages' },
+      { icon: Mail, labelKey: 'dashboard.menu.contactMessages', path: '/dashboard/admin/contact-messages' },
+      { icon: FileText, labelKey: 'dashboard.menu.analytics', path: '/dashboard/admin/analytics' },
     ],
     doctor: [
-      { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard/doctor' },
-      { icon: Calendar, label: 'Appointments', path: '/dashboard/doctor/appointments' },
-      { icon: Users, label: 'Patients', path: '/dashboard/doctor/patients' },
-      { icon: FileText, label: 'Prescriptions', path: '/dashboard/doctor/prescriptions' },
-      { icon: Mail, label: 'Messages', path: '/dashboard/doctor/messages' },
-      { icon: FileText, label: 'Consultations', path: '/dashboard/doctor/consultations' },
-      { icon: DollarSign, label: 'Billing', path: '/dashboard/doctor/billing' },
-      { icon: FileText, label: 'Reviews', path: '/dashboard/doctor/reviews' },
+      { icon: LayoutDashboard, labelKey: 'dashboard.menu.dashboard', path: '/dashboard/doctor' },
+      { icon: Calendar, labelKey: 'dashboard.menu.appointments', path: '/dashboard/doctor/appointments' },
+      { icon: Users, labelKey: 'dashboard.menu.patients', path: '/dashboard/doctor/patients' },
+      { icon: FileText, labelKey: 'dashboard.menu.prescriptions', path: '/dashboard/doctor/prescriptions' },
+      { icon: Mail, labelKey: 'dashboard.menu.messages', path: '/dashboard/doctor/messages' },
+      { icon: FileText, labelKey: 'dashboard.menu.consultations', path: '/dashboard/doctor/consultations' },
+      { icon: DollarSign, labelKey: 'dashboard.menu.billing', path: '/dashboard/doctor/billing' },
+      { icon: FileText, labelKey: 'dashboard.menu.reviews', path: '/dashboard/doctor/reviews' },
     ],
     nurse: [
-      { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard/nurse' },
-      { icon: Users, label: 'Patients', path: '/dashboard/nurse/patients' },
-      { icon: Calendar, label: 'Appointments', path: '/dashboard/nurse/appointments' },
-      { icon: FileText, label: 'Prescriptions', path: '/dashboard/nurse/prescriptions' },
-      { icon: Mail, label: 'Messages', path: '/dashboard/nurse/messages' },
+      { icon: LayoutDashboard, labelKey: 'dashboard.menu.dashboard', path: '/dashboard/nurse' },
+      { icon: Users, labelKey: 'dashboard.menu.patients', path: '/dashboard/nurse/patients' },
+      { icon: Calendar, labelKey: 'dashboard.menu.appointments', path: '/dashboard/nurse/appointments' },
+      { icon: FileText, labelKey: 'dashboard.menu.prescriptions', path: '/dashboard/nurse/prescriptions' },
+      { icon: Mail, labelKey: 'dashboard.menu.messages', path: '/dashboard/nurse/messages' },
     ],
     patient: [
-      { icon: HomeIcon, label: 'Home', path: '/' },
-      { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard/patient' },
-      { icon: Calendar, label: 'Appointments', path: '/dashboard/patient/appointments' },
-      { icon: FileText, label: 'Prescriptions', path: '/dashboard/patient/prescriptions' },
-      { icon: Star, label: 'Reviews', path: '/dashboard/patient/reviews' },
-      { icon: Activity, label: 'Health Records', path: '/dashboard/patient/records' },
-      { icon: DollarSign, label: 'Billing', path: '/dashboard/patient/billing' },
+      { icon: HomeIcon, labelKey: 'dashboard.menu.home', path: '/' },
+      { icon: LayoutDashboard, labelKey: 'dashboard.menu.dashboard', path: '/dashboard/patient' },
+      { icon: Calendar, labelKey: 'dashboard.menu.appointments', path: '/dashboard/patient/appointments' },
+      { icon: FileText, labelKey: 'dashboard.menu.prescriptions', path: '/dashboard/patient/prescriptions' },
+      { icon: Star, labelKey: 'dashboard.menu.reviews', path: '/dashboard/patient/reviews' },
+      { icon: Activity, labelKey: 'dashboard.menu.healthRecords', path: '/dashboard/patient/records' },
+      { icon: DollarSign, labelKey: 'dashboard.menu.billing', path: '/dashboard/patient/billing' },
     ],
   };
 
@@ -304,10 +312,10 @@ export const DashboardLayout = ({ children, role, hideTopNav = false }: Dashboar
                 {userName}
               </div>
               <div className="text-xs text-sidebar-foreground/80">
-                {role === 'admin' && 'Admin Account'}
-                {role === 'doctor' && 'Doctor Account'}
-                {role === 'nurse' && 'Nurse Account'}
-                {role === 'patient' && 'Patient Account'}
+                {role === 'admin' && t('dashboard.account.admin')}
+                {role === 'doctor' && t('dashboard.account.doctor')}
+                {role === 'nurse' && t('dashboard.account.nurse')}
+                {role === 'patient' && t('dashboard.account.patient')}
               </div>
             </div>
           </div>
@@ -325,10 +333,10 @@ export const DashboardLayout = ({ children, role, hideTopNav = false }: Dashboar
                       ? 'bg-primary text-primary-foreground shadow-sm'
                       : 'hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
                   }`}
-                  title={item.label}
+                  title={t(item.labelKey)}
                 >
                   <Icon className="h-5 w-5 flex-shrink-0" />
-                  <span className="text-sm font-medium">{item.label}</span>
+                  <span className="text-sm font-medium">{t(item.labelKey)}</span>
                 </button>
               );
             })}
@@ -339,11 +347,11 @@ export const DashboardLayout = ({ children, role, hideTopNav = false }: Dashboar
                 <DropdownMenuTrigger asChild>
                   <button
                     className="w-full flex items-center justify-between gap-3 px-3 py-2.5 rounded-lg transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-                    title="Settings"
+                    title={t('dashboard.menu.settings')}
                   >
                     <div className="flex items-center gap-3">
                       <Settings className="h-5 w-5 flex-shrink-0" />
-                      <span className="text-sm font-medium">Settings</span>
+                      <span className="text-sm font-medium">{t('dashboard.menu.settings')}</span>
                     </div>
                     <ChevronDown className={`h-4 w-4 transition-transform ${settingsOpen ? 'rotate-180' : ''}`} />
                   </button>
@@ -351,20 +359,20 @@ export const DashboardLayout = ({ children, role, hideTopNav = false }: Dashboar
                 <DropdownMenuContent align="end" className="w-56">
                   <DropdownMenuItem onClick={handleViewProfile}>
                     <Eye className="h-4 w-4 mr-2" />
-                    View Profile
+                    {t('dashboard.menu.viewProfile')}
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={handleEditProfile}>
                     <Edit className="h-4 w-4 mr-2" />
-                    Edit Profile
+                    {t('dashboard.menu.editProfile')}
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => { setSettingsOpen(false); setShowPasswordModal(true); }}>
                     <Key className="h-4 w-4 mr-2" />
-                    Change Password
+                    {t('dashboard.menu.changePassword')}
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleLogout}>
                     <LogOut className="h-4 w-4 mr-2" />
-                    Sign Out
+                    {t('dashboard.menu.signOut')}
                   </DropdownMenuItem>
                   {role !== 'admin' && (
                     <DropdownMenuItem
@@ -372,7 +380,7 @@ export const DashboardLayout = ({ children, role, hideTopNav = false }: Dashboar
                       className="text-red-600 focus:text-red-600 focus:bg-red-50"
                     >
                       <Trash2 className="h-4 w-4 mr-2" />
-                      Delete Account
+                      {t('dashboard.menu.deleteAccount')}
                     </DropdownMenuItem>
                   )}
                 </DropdownMenuContent>
@@ -388,19 +396,18 @@ export const DashboardLayout = ({ children, role, hideTopNav = false }: Dashboar
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogTitle>{t('common.confirmationTitle') ?? 'Are you absolutely sure?'}</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete your account and remove
-              your data from our servers.
+              {t('common.deleteAccountWarning') ?? 'This action cannot be undone. This will permanently delete your account and remove your data from our servers.'}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDeleteAccount}
               className="bg-red-600 hover:bg-red-700 focus:ring-red-600"
             >
-              Delete Account
+              {t('dashboard.menu.deleteAccount')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -435,37 +442,37 @@ export const DashboardLayout = ({ children, role, hideTopNav = false }: Dashboar
       <Dialog open={showPasswordModal} onOpenChange={setShowPasswordModal}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Change Password</DialogTitle>
+            <DialogTitle>{t('dashboard.changePassword.title')}</DialogTitle>
             <DialogDescription>
-              Enter your new password below. Password must be at least 8 characters long.
+              {t('dashboard.changePassword.description')}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
               <Label htmlFor="newPassword">
                 <Lock className="h-4 w-4 inline mr-2" />
-                New Password
+                {t('dashboard.changePassword.newPassword')}
               </Label>
               <Input
                 id="newPassword"
                 type="password"
                 value={passwordData.newPassword}
                 onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
-                placeholder="Enter new password (min 8 characters)"
+                placeholder={t('dashboard.changePassword.placeholder')}
                 minLength={8}
               />
             </div>
             <div className="space-y-2">
               <Label htmlFor="confirmPassword">
                 <Lock className="h-4 w-4 inline mr-2" />
-                Confirm New Password
+                {t('dashboard.changePassword.confirmPassword')}
               </Label>
               <Input
                 id="confirmPassword"
                 type="password"
                 value={passwordData.confirmPassword}
                 onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
-                placeholder="Confirm new password"
+                placeholder={t('dashboard.changePassword.placeholderConfirm')}
               />
             </div>
           </div>
@@ -478,16 +485,16 @@ export const DashboardLayout = ({ children, role, hideTopNav = false }: Dashboar
               }}
               disabled={passwordLoading}
             >
-              Cancel
+              {t('common.cancel')}
             </Button>
             <Button onClick={handleChangePassword} disabled={passwordLoading}>
               {passwordLoading ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Changing...
+                  {t('dashboard.changePassword.changing')}
                 </>
               ) : (
-                'Change Password'
+                t('dashboard.changePassword.title')
               )}
             </Button>
           </DialogFooter>

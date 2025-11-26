@@ -69,8 +69,14 @@ const DoctorConsultationsPage = () => {
     consultation.patientName.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const upcomingConsultations = filteredConsultations.filter((c) => c.status === 'Scheduled' || c.status === 'Pending');
-  const completedConsultations = filteredConsultations.filter((c) => c.status === 'Completed');
+  const upcomingConsultations = filteredConsultations.filter((c) => {
+    const status = (c.status || '').toLowerCase();
+    return status === 'scheduled' || status === 'pending';
+  });
+  const completedConsultations = filteredConsultations.filter((c) => {
+    const status = (c.status || '').toLowerCase();
+    return status === 'completed';
+  });
 
   const handleJoinMeeting = (meetingLink?: string) => {
     if (!meetingLink) {
@@ -82,11 +88,21 @@ const DoctorConsultationsPage = () => {
   };
 
   const getStatusBadge = (status: string) => {
-    return status === 'Scheduled' ? (
-      <Badge className="bg-blue-100 text-blue-700">Scheduled</Badge>
-    ) : (
-      <Badge className="bg-gray-100 text-gray-700">Completed</Badge>
-    );
+    const normalized = (status || '').toLowerCase();
+    switch (normalized) {
+      case 'pending':
+        return <Badge className="bg-amber-100 text-amber-700">Pending</Badge>;
+      case 'scheduled':
+        return <Badge className="bg-blue-100 text-blue-700">Scheduled</Badge>;
+      case 'completed':
+        return <Badge className="bg-green-100 text-green-700">Completed</Badge>;
+      case 'cancelled':
+        return <Badge className="bg-red-100 text-red-700">Cancelled</Badge>;
+      case 'rescheduled':
+        return <Badge className="bg-purple-100 text-purple-700">Rescheduled</Badge>;
+      default:
+        return <Badge variant="outline">{status || 'Unknown'}</Badge>;
+    }
   };
 
   const formatDateTime = (dateStr: string, timeStr: string) => {

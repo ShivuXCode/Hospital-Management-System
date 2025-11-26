@@ -8,23 +8,23 @@ const About = () => {
   const values = [
     {
       icon: Heart,
-      title: 'Compassionate Care',
-      description: 'We treat every patient with empathy, respect, and kindness',
+      title: t('about.values.compassion.title'),
+      description: t('about.values.compassion.desc'),
     },
     {
       icon: Shield,
-      title: 'Excellence',
-      description: 'Committed to the highest standards of medical care',
+      title: t('about.values.excellence.title'),
+      description: t('about.values.excellence.desc'),
     },
     {
       icon: Users,
-      title: 'Patient-Centered',
-      description: 'Your health and wellbeing are our top priorities',
+      title: t('about.values.patient.title'),
+      description: t('about.values.patient.desc'),
     },
     {
       icon: Award,
-      title: 'Professional',
-      description: 'Expert medical team with years of experience',
+      title: t('about.values.professional.title'),
+      description: t('about.values.professional.desc'),
     },
   ];
 
@@ -47,22 +47,18 @@ const About = () => {
             <Card className="shadow-medium">
               <CardContent className="p-8">
                 <Target className="h-12 w-12 text-primary mb-4" />
-                <h2 className="text-2xl font-bold mb-4">Our Mission</h2>
+                <h2 className="text-2xl font-bold mb-4">{t('about.mission.title')}</h2>
                 <p className="text-muted-foreground leading-relaxed">
-                  To provide accessible, affordable, and quality healthcare services to our community. 
-                  We strive to promote wellness, prevent illness, and restore health through 
-                  compassionate care and medical excellence.
+                  {t('about.mission.description')}
                 </p>
               </CardContent>
             </Card>
             <Card className="shadow-medium">
               <CardContent className="p-8">
                 <Eye className="h-12 w-12 text-secondary mb-4" />
-                <h2 className="text-2xl font-bold mb-4">Our Vision</h2>
+                <h2 className="text-2xl font-bold mb-4">{t('about.vision.title')}</h2>
                 <p className="text-muted-foreground leading-relaxed">
-                  To be the leading healthcare provider recognized for clinical excellence, 
-                  innovative treatments, and patient satisfaction. We envision a healthier 
-                  community where everyone has access to world-class medical care.
+                  {t('about.vision.description')}
                 </p>
               </CardContent>
             </Card>
@@ -74,9 +70,9 @@ const About = () => {
       <section className="py-20 px-4 bg-muted/30">
         <div className="container mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Our Core Values</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">{t('about.values.sectionTitle')}</h2>
             <p className="text-muted-foreground text-lg">
-              The principles that guide everything we do
+              {t('about.values.sectionSubtitle')}
             </p>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -100,21 +96,21 @@ const About = () => {
       <section className="py-20 px-4">
         <div className="container mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Accreditation & Achievements</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">{t('about.achievements.title')}</h2>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
             {[
-              { year: '1998', title: 'Hospital Established' },
-              { year: '2005', title: 'NABH Accredited' },
-              { year: '2010', title: 'ISO 9001:2015 Certified' },
-              { year: '2015', title: 'Green Hospital Recognition' },
-              { year: '2020', title: 'COVID Care Excellence Award' },
-              { year: '2023', title: 'Best Multi-Specialty Hospital' },
+              { year: '1998', titleKey: 'about.achievements.established' },
+              { year: '2005', titleKey: 'about.achievements.nabh' },
+              { year: '2010', titleKey: 'about.achievements.iso' },
+              { year: '2015', titleKey: 'about.achievements.green' },
+              { year: '2020', titleKey: 'about.achievements.covid' },
+              { year: '2023', titleKey: 'about.achievements.multiSpecialty' },
             ].map((achievement, index) => (
               <Card key={index} className="shadow-soft text-center">
                 <CardContent className="p-6">
                   <div className="text-3xl font-bold text-primary mb-2">{achievement.year}</div>
-                  <p className="text-muted-foreground">{achievement.title}</p>
+                  <p className="text-muted-foreground">{t(achievement.titleKey)}</p>
                 </CardContent>
               </Card>
             ))}

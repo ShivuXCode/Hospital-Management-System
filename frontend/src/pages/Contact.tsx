@@ -86,8 +86,8 @@ const Contact = () => {
     // Check if user is logged in
     if (!apiService.isAuthenticated()) {
       toast({
-        title: 'Login Required',
-        description: 'Please log in to send a message.',
+        title: t('contact.toast.loginTitle'),
+        description: t('contact.toast.loginDesc'),
         variant: 'destructive',
       });
       navigate('/login');
@@ -98,8 +98,8 @@ const Contact = () => {
     const user = apiService.getUser();
     if (user?.role !== 'Patient') {
       toast({
-        title: 'Access Denied',
-        description: 'Only patients can send contact messages.',
+        title: t('contact.toast.accessTitle'),
+        description: t('contact.toast.accessDesc'),
         variant: 'destructive',
       });
       return;
@@ -120,22 +120,22 @@ const Contact = () => {
 
       if (data.success) {
         toast({
-          title: 'Message Sent!',
-          description: 'We will get back to you soon.',
+          title: t('contact.toast.successTitle'),
+          description: t('contact.toast.successDesc'),
         });
         setFormData({ name: '', email: '', phone: '', message: '' });
       } else {
         toast({
-          title: 'Error',
-          description: data.message || 'Failed to send message. Please try again.',
+          title: t('contact.toast.errorTitle'),
+          description: data.message || t('contact.toast.errorDesc'),
           variant: 'destructive',
         });
       }
     } catch (error) {
       console.error('Error sending message:', error);
       toast({
-        title: 'Error',
-        description: 'Failed to send message. Please try again.',
+        title: t('contact.toast.errorTitle'),
+        description: t('contact.toast.errorDesc'),
         variant: 'destructive',
       });
     } finally {
@@ -150,7 +150,7 @@ const Contact = () => {
         <div className="container mx-auto text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">{t('contact.title')}</h1>
           <p className="text-xl text-muted-foreground">
-            We're here to help. Reach out to us anytime.
+            {t('contact.subtitle')}
           </p>
         </div>
       </section>
@@ -265,7 +265,7 @@ const Contact = () => {
                       {loading ? (
                         <>
                           <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                          Sending...
+                          {t('contact.sending')}
                         </>
                       ) : (
                         t('contact.sendMessage')

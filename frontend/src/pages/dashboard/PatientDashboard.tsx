@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 
@@ -44,24 +44,30 @@ const activityIconMap: Record<DashboardActivityType, typeof Calendar> = {
 
 const allowedActivityTypes: DashboardActivityType[] = ['appointment', 'prescription', 'bill', 'health'];
 
-const formatShortDate = (value?: string | null) => {
-  if (!value) return 'No records';
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return 'Unknown date';
-  return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
-};
-
-const formatDateTime = (value?: string | null) => {
-  if (!value) return 'Unknown date';
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return 'Unknown date';
-  return date.toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });
-};
-
 const PatientDashboard = () => {
   const { t } = useLanguage();
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  const formatShortDate = useCallback(
+    (value?: string | null) => {
+      if (!value) return t('common.noRecords');
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return t('common.unknownDate');
+      return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+    },
+    [t]
+  );
+
+  const formatDateTime = useCallback(
+    (value?: string | null) => {
+      if (!value) return t('common.unknownDate');
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return t('common.unknownDate');
+      return date.toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });
+    },
+    [t]
+  );
 
   const [stats, setStats] = useState<DashboardStats>({
     upcomingAppointments: 0,
@@ -128,7 +134,7 @@ const PatientDashboard = () => {
               return {
                 id: item.id?.toString() ?? `${inferredType}-${item.date ?? Date.now()}`,
                 type: inferredType,
-                title: item.title ?? 'Activity update',
+                title: item.title ?? t('patientDashboard.activity.defaultTitle'),
                 description: item.description,
                 status: item.status,
                 date: item.date,
@@ -154,7 +160,7 @@ const PatientDashboard = () => {
     } finally {
       setLoading(false);
     }
-  }, [navigate, toast]);
+  }, [navigate, toast, t]);
 
   useEffect(() => {
     let isMounted = true;
@@ -187,37 +193,38 @@ const PatientDashboard = () => {
 
   const statsCards = [
     {
-      title: 'Upcoming Appointments',
+      title: t('patientDashboard.stats.upcoming'),
       value: loading ? '—' : stats.upcomingAppointments.toString(),
       icon: Calendar,
       path: '/dashboard/patient/appointments',
     },
     {
-      title: 'Prescriptions',
+      title: t('patientDashboard.stats.prescriptions'),
       value: loading ? '—' : stats.activePrescriptions.toString(),
       icon: FileText,
       path: '/dashboard/patient/prescriptions',
     },
     {
-      title: 'Pending Bills',
+      title: t('patientDashboard.stats.pendingBills'),
       value: loading ? '—' : stats.pendingBills.toString(),
       icon: Receipt,
       path: '/dashboard/patient/billing',
     },
     {
-      title: 'Health Records',
+      title: t('patientDashboard.stats.healthRecords'),
       value: (() => {
-        if (loading) return 'BMI: —';
+        const bmiLabel = t('patientDashboard.stats.bmiLabel');
+        if (loading) return `${bmiLabel}: —`;
         const bmi = stats.healthRecord?.bmi;
-        if (bmi === null || bmi === undefined) return 'BMI: —';
+        if (bmi === null || bmi === undefined) return `${bmiLabel}: —`;
         const numeric = Number(bmi);
-        if (Number.isNaN(numeric)) return 'BMI: —';
-        return `BMI: ${numeric.toFixed(1)}`;
+        if (Number.isNaN(numeric)) return `${bmiLabel}: —`;
+        return `${bmiLabel}: ${numeric.toFixed(1)}`;
       })(),
       supportingText:
         loading || !stats.healthRecord?.lastUpdated
           ? undefined
-          : `Updated ${formatShortDate(stats.healthRecord.lastUpdated)}`,
+          : `${t('patientDashboard.stats.healthUpdatedPrefix')} ${formatShortDate(stats.healthRecord.lastUpdated)}`,
       icon: Activity,
       path: '/dashboard/patient/records',
     },
@@ -227,12 +234,12 @@ const PatientDashboard = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold mb-2">Patient Dashboard</h1>
-          <p className="text-muted-foreground">Access your medical records and appointments</p>
+          <h1 className="text-3xl font-bold mb-2">{t('patientDashboard.title')}</h1>
+          <p className="text-muted-foreground">{t('patientDashboard.subtitle')}</p>
         </div>
         <Button onClick={() => navigate('/dashboard/patient/profile')} className="gap-2 gradient-primary">
           <User className="h-4 w-4" />
-          View My Profile
+          {t('patientDashboard.viewProfile')}
         </Button>
       </div>
 
@@ -265,7 +272,7 @@ const PatientDashboard = () => {
       <div className="grid md:grid-cols-2 gap-6">
         <Card className="shadow-soft">
           <CardHeader>
-            <CardTitle>Quick Actions</CardTitle>
+            <CardTitle>{t('patientDashboard.quickActions')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             <Button
@@ -274,7 +281,7 @@ const PatientDashboard = () => {
               onClick={() => navigate('/book-appointment')}
             >
               <Calendar className="h-4 w-4 mr-2" />
-              Book New Appointment
+              {t('patientDashboard.action.bookAppointment')}
             </Button>
             <Button
               variant="outline"
@@ -282,7 +289,7 @@ const PatientDashboard = () => {
               onClick={() => navigate('/dashboard/patient/records')}
             >
               <Activity className="h-4 w-4 mr-2" />
-              Update Health Records
+              {t('patientDashboard.action.updateHealth')}
             </Button>
             <Button
               variant="outline"
@@ -290,20 +297,20 @@ const PatientDashboard = () => {
               onClick={() => navigate('/doctors')}
             >
               <User className="h-4 w-4 mr-2" />
-              View All Doctors
+              {t('patientDashboard.action.viewDoctors')}
             </Button>
           </CardContent>
         </Card>
 
         <Card className="shadow-soft">
           <CardHeader>
-            <CardTitle>Recent Activity</CardTitle>
+            <CardTitle>{t('patientDashboard.recentActivity')}</CardTitle>
           </CardHeader>
           <CardContent>
             {loading ? (
-              <p className="text-muted-foreground text-sm text-center py-6">Loading activity…</p>
+              <p className="text-muted-foreground text-sm text-center py-6">{t('common.loadingActivity')}</p>
             ) : recentActivity.length === 0 ? (
-              <p className="text-muted-foreground text-sm">No recent activity found.</p>
+              <p className="text-muted-foreground text-sm">{t('common.noRecentActivity')}</p>
             ) : (
               <div className="space-y-4">
                 {recentActivity.map((activity) => {

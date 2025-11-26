@@ -171,17 +171,17 @@ const Doctors = () => {
       <section className="py-16 px-4 bg-gradient-to-br from-primary/10 to-secondary/10">
         <div className="container mx-auto text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
-            Our Expert Medical Team
+            {t('doctors.page.title')}
           </h1>
           <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Meet our team of experienced and dedicated healthcare professionals across various specialties
+            {t('doctors.page.subtitle')}
           </p>
           
           <div className="max-w-4xl mx-auto grid md:grid-cols-[1fr_auto] gap-4">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Search by name, department, or qualification..."
+                placeholder={t('doctors.search.placeholder')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10"
@@ -190,10 +190,10 @@ const Doctors = () => {
             <Select value={selectedDepartment} onValueChange={setSelectedDepartment}>
               <SelectTrigger className="w-full md:w-[240px]">
                 <Filter className="h-4 w-4 mr-2" />
-                <SelectValue placeholder="Filter by Department" />
+                <SelectValue placeholder={t('doctors.filter.placeholder')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Departments</SelectItem>
+                <SelectItem value="all">{t('doctors.filter.all')}</SelectItem>
                 {departments.slice(1).map((dept) => (
                   <SelectItem key={dept} value={dept}>
                     {dept}
@@ -216,8 +216,10 @@ const Doctors = () => {
             <>
               <div className="mb-8 text-center">
                 <p className="text-muted-foreground">
-                  Showing {displayDoctors.length} doctor{displayDoctors.length !== 1 ? 's' : ''} 
-                  {selectedDepartment !== 'all' ? ` in ${selectedDepartment}` : ' across all departments'}
+                  {t('doctors.result.count').replace('{count}', displayDoctors.length.toString())}{' '}
+                  {selectedDepartment !== 'all'
+                    ? t('doctors.result.department').replace('{department}', selectedDepartment)
+                    : t('doctors.result.all')}
                 </p>
               </div>
               
@@ -257,7 +259,7 @@ const Doctors = () => {
                         </div>
                         <div className="flex items-center gap-3">
                           <Star className="h-4 w-4 fill-yellow-400 text-yellow-400 flex-shrink-0" />
-                          <span className="font-semibold text-foreground">{doctor.rating} Rating</span>
+                          <span className="font-semibold text-foreground">{doctor.rating} {t('doctors.ratingLabel')}</span>
                         </div>
                       </div>
                       
@@ -268,7 +270,7 @@ const Doctors = () => {
                           size="sm" 
                           onClick={() => handleViewProfile(doctor.id)}
                         >
-                          View Details
+                          {t('doctors.button.viewDetails')}
                         </Button>
                       </div>
                     </CardContent>
@@ -279,11 +281,11 @@ const Doctors = () => {
           ) : (
             <div className="text-center py-12">
               <Users className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
-              <h3 className="text-xl font-semibold mb-2">No doctors available</h3>
+              <h3 className="text-xl font-semibold mb-2">{t('doctors.empty.title')}</h3>
               <p className="text-muted-foreground">
                 {selectedDepartment !== 'all'
-                  ? `No doctors available in ${selectedDepartment} department.`
-                  : 'No doctors found matching your search.'}
+                  ? t('doctors.empty.department')
+                  : t('doctors.empty.search')}
               </p>
               {selectedDepartment !== 'all' && (
                 <Button
@@ -291,7 +293,7 @@ const Doctors = () => {
                   className="mt-4"
                   onClick={() => setSelectedDepartment('all')}
                 >
-                  View All Departments
+                  {t('doctors.button.viewAll')}
                 </Button>
               )}
             </div>

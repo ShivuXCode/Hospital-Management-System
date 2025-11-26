@@ -6,9 +6,11 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { useToast } from '@/hooks/use-toast';
 import { DollarSign, Calendar, User, FileText, Download, Eye } from 'lucide-react';
 import { API_URL } from '@/services/api';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const PatientBillingPage = () => {
   const { toast } = useToast();
+  const { t } = useLanguage();
   const [bills, setBills] = useState<any[]>([]);
   const [selectedBill, setSelectedBill] = useState<any>(null);
   const [loading, setLoading] = useState(false);
@@ -31,16 +33,16 @@ const PatientBillingPage = () => {
         setBills(data.bills || []);
       } else {
         toast({
-          title: 'Error',
-          description: data.message || 'Failed to load bills',
+          title: t('patientBilling.toast.errorTitle'),
+          description: data.message || t('patientBilling.toast.errorDesc'),
           variant: 'destructive',
         });
       }
     } catch (error) {
       console.error('Error fetching bills:', error);
       toast({
-        title: 'Error',
-        description: 'Failed to load bills',
+        title: t('patientBilling.toast.errorTitle'),
+        description: t('patientBilling.toast.errorDesc'),
         variant: 'destructive',
       });
     } finally {
@@ -62,16 +64,16 @@ const PatientBillingPage = () => {
         setDialogOpen(true);
       } else {
         toast({
-          title: 'Error',
-          description: data.message || 'Failed to load bill details',
+          title: t('patientBilling.toast.errorTitle'),
+          description: data.message || t('patientBilling.toast.detailsErrorDesc'),
           variant: 'destructive',
         });
       }
     } catch (error) {
       console.error('Error fetching bill details:', error);
       toast({
-        title: 'Error',
-        description: 'Failed to load bill details',
+        title: t('patientBilling.toast.errorTitle'),
+        description: t('patientBilling.toast.detailsErrorDesc'),
         variant: 'destructive',
       });
     } finally {
@@ -81,10 +83,10 @@ const PatientBillingPage = () => {
 
   const getStatusBadge = (status: string) => {
     const statusConfig: Record<string, { label: string; variant: any; className: string }> = {
-      draft: { label: 'Draft', variant: 'secondary', className: 'bg-gray-100 text-gray-800' },
-      pending: { label: 'Pending', variant: 'default', className: 'bg-yellow-100 text-yellow-800' },
-      finalized: { label: 'Finalized', variant: 'default', className: 'bg-blue-100 text-blue-800' },
-      paid: { label: 'Paid', variant: 'default', className: 'bg-green-100 text-green-800' }
+      draft: { label: t('patientBilling.status.draft'), variant: 'secondary', className: 'bg-gray-100 text-gray-800' },
+      pending: { label: t('patientBilling.status.pending'), variant: 'default', className: 'bg-yellow-100 text-yellow-800' },
+      finalized: { label: t('patientBilling.status.finalized'), variant: 'default', className: 'bg-blue-100 text-blue-800' },
+      paid: { label: t('patientBilling.status.paid'), variant: 'default', className: 'bg-green-100 text-green-800' }
     };
 
     const config = statusConfig[status] || statusConfig.draft;
@@ -97,9 +99,9 @@ const PatientBillingPage = () => {
 
   const getPaymentStatusBadge = (status: string) => {
     const statusConfig: Record<string, { label: string; className: string }> = {
-      unpaid: { label: 'Unpaid', className: 'bg-red-100 text-red-800' },
-      partial: { label: 'Partial', className: 'bg-orange-100 text-orange-800' },
-      paid: { label: 'Paid', className: 'bg-green-100 text-green-800' }
+      unpaid: { label: t('patientBilling.paymentStatus.unpaid'), className: 'bg-red-100 text-red-800' },
+      partial: { label: t('patientBilling.paymentStatus.partial'), className: 'bg-orange-100 text-orange-800' },
+      paid: { label: t('patientBilling.paymentStatus.paid'), className: 'bg-green-100 text-green-800' }
     };
 
     const config = statusConfig[status] || statusConfig.unpaid;
@@ -117,8 +119,8 @@ const PatientBillingPage = () => {
 
   const handleDownload = () => {
     toast({
-      title: 'Coming Soon',
-      description: 'PDF download feature will be available soon',
+      title: t('patientBilling.toast.comingSoonTitle'),
+      description: t('patientBilling.toast.comingSoonDesc'),
     });
   };
 
@@ -126,9 +128,9 @@ const PatientBillingPage = () => {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">My Bills</h1>
+        <h1 className="text-3xl font-bold tracking-tight">{t('patientBilling.title')}</h1>
         <p className="text-muted-foreground mt-2">
-          View your medical bills and payment history
+          {t('patientBilling.subtitle')}
         </p>
       </div>
 
@@ -136,7 +138,7 @@ const PatientBillingPage = () => {
       <div className="grid gap-4 md:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Bills</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('patientBilling.stats.total')}</CardTitle>
             <FileText className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -145,7 +147,7 @@ const PatientBillingPage = () => {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Pending</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('patientBilling.stats.pending')}</CardTitle>
             <FileText className="h-4 w-4 text-yellow-600" />
           </CardHeader>
           <CardContent>
@@ -156,7 +158,7 @@ const PatientBillingPage = () => {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Unpaid</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('patientBilling.stats.unpaid')}</CardTitle>
             <DollarSign className="h-4 w-4 text-red-600" />
           </CardHeader>
           <CardContent>
@@ -167,7 +169,7 @@ const PatientBillingPage = () => {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Amount Due</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('patientBilling.stats.amountDue')}</CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -181,17 +183,17 @@ const PatientBillingPage = () => {
       {/* Bills List */}
       <Card>
         <CardHeader>
-          <CardTitle>All Bills</CardTitle>
+          <CardTitle>{t('patientBilling.card.allBills')}</CardTitle>
           <CardDescription>
-            View details and payment status of your medical bills
+            {t('patientBilling.card.description')}
           </CardDescription>
         </CardHeader>
         <CardContent>
           {loading && bills.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground">Loading...</div>
+            <div className="text-center py-8 text-muted-foreground">{t('patientBilling.loading')}</div>
           ) : bills.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">
-              No bills found
+              {t('patientBilling.empty')}
             </div>
           ) : (
             <div className="space-y-4">
@@ -203,36 +205,36 @@ const PatientBillingPage = () => {
                   <div className="flex-1 space-y-1">
                     <div className="flex items-center gap-3">
                       <User className="h-4 w-4 text-muted-foreground" />
-                      <p className="font-medium">Dr. {bill.doctorName}</p>
+                      <p className="font-medium">{t('patientPrescriptions.doctorPrefix')} {bill.doctorName}</p>
                       {getStatusBadge(bill.status)}
                       {getPaymentStatusBadge(bill.paymentStatus)}
                     </div>
                     <div className="flex items-center gap-3 text-sm text-muted-foreground">
                       <Calendar className="h-4 w-4" />
-                      <span>{formatDate(bill.appointmentDate)} at {bill.appointmentTime}</span>
+                      <span>{formatDate(bill.appointmentDate)} {t('patientAppointments.toast.at')} {bill.appointmentTime}</span>
                     </div>
                     {bill.appointment?.reason && (
                       <p className="text-sm text-muted-foreground ml-7">
-                        Reason: {bill.appointment.reason}
+                        {t('patientAppointments.reasonLabel')} {bill.appointment.reason}
                       </p>
                     )}
                     <div className="flex items-center gap-4 ml-7 mt-2">
                       <div className="flex items-center gap-2">
                         <DollarSign className="h-4 w-4 text-blue-600" />
                         <span className="text-sm">
-                          Consultation: ${bill.consultationFee?.amount || 0}
+                          {t('patientBilling.summary.consultation')} ${bill.consultationFee?.amount || 0}
                         </span>
                       </div>
                       <div className="flex items-center gap-2">
                         <DollarSign className="h-4 w-4 text-purple-600" />
                         <span className="text-sm">
-                          Hospital: ${bill.totals?.hospitalTotal || 0}
+                          {t('patientBilling.summary.hospital')} ${bill.totals?.hospitalTotal || 0}
                         </span>
                       </div>
                       <div className="flex items-center gap-2">
                         <DollarSign className="h-4 w-4 text-green-600" />
                         <span className="text-sm font-medium">
-                          Grand Total: ${bill.totals?.grandTotal || 0}
+                          {t('patientBilling.summary.grandTotal')} ${bill.totals?.grandTotal || 0}
                         </span>
                       </div>
                     </div>
@@ -240,7 +242,7 @@ const PatientBillingPage = () => {
                   <div className="flex items-center gap-2">
                     <Button onClick={() => fetchBillDetails(bill._id)} size="sm" variant="outline">
                       <Eye className="h-4 w-4 mr-2" />
-                      View Details
+                      {t('patientBilling.details.view')}
                     </Button>
                   </div>
                 </div>
@@ -254,9 +256,9 @@ const PatientBillingPage = () => {
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Bill Details</DialogTitle>
+            <DialogTitle>{t('patientBilling.details.title')}</DialogTitle>
             <DialogDescription>
-              Detailed breakdown of your medical bill
+              {t('patientBilling.details.subtitle')}
             </DialogDescription>
           </DialogHeader>
 
@@ -265,23 +267,23 @@ const PatientBillingPage = () => {
               {/* Bill Info */}
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-sm">Bill Information</CardTitle>
+                  <CardTitle className="text-sm">{t('patientBilling.details.info')}</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-2 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Doctor:</span>
-                    <span className="font-medium">Dr. {selectedBill.doctorName}</span>
+                    <span className="text-muted-foreground">{t('profile.doctorName')}:</span>
+                    <span className="font-medium">{t('patientPrescriptions.doctorPrefix')} {selectedBill.doctorName}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Date:</span>
-                    <span>{formatDate(selectedBill.appointmentDate)} at {selectedBill.appointmentTime}</span>
+                    <span className="text-muted-foreground">{t('profile.date')}:</span>
+                    <span>{formatDate(selectedBill.appointmentDate)} {t('patientAppointments.toast.at')} {selectedBill.appointmentTime}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Status:</span>
+                    <span className="text-muted-foreground">{t('profile.status')}:</span>
                     <div>{getStatusBadge(selectedBill.status)}</div>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Payment Status:</span>
+                    <span className="text-muted-foreground">{t('patientBilling.details.paymentStatus')}:</span>
                     <div>{getPaymentStatusBadge(selectedBill.paymentStatus)}</div>
                   </div>
                 </CardContent>
@@ -290,12 +292,12 @@ const PatientBillingPage = () => {
               {/* Consultation Fee */}
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-sm">Consultation Fee</CardTitle>
+                  <CardTitle className="text-sm">{t('patientBilling.details.consultation')}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="flex justify-between items-center">
                     <div>
-                      <p className="font-medium">Doctor Consultation</p>
+                      <p className="font-medium">{t('patientBilling.details.consultation')}</p>
                       {selectedBill.consultationFee?.notes && (
                         <p className="text-sm text-muted-foreground mt-1">
                           {selectedBill.consultationFee.notes}
@@ -311,13 +313,13 @@ const PatientBillingPage = () => {
               {selectedBill.hospitalCharges && (
                 <Card>
                   <CardHeader>
-                    <CardTitle className="text-sm">Hospital Charges</CardTitle>
+                    <CardTitle className="text-sm">{t('patientBilling.details.hospital')}</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     {/* Lab Tests */}
                     {selectedBill.hospitalCharges.labTests?.length > 0 && (
                       <div>
-                        <p className="font-medium text-sm mb-2">Lab Tests</p>
+                        <p className="font-medium text-sm mb-2">{t('patientBilling.details.labTests')}</p>
                         <div className="space-y-1">
                           {selectedBill.hospitalCharges.labTests.map((test: any, idx: number) => (
                             <div key={idx} className="flex justify-between text-sm">
@@ -327,7 +329,7 @@ const PatientBillingPage = () => {
                           ))}
                         </div>
                         <div className="flex justify-between text-sm font-medium mt-2 pt-2 border-t">
-                          <span>Lab Tests Subtotal:</span>
+                          <span>{t('patientBilling.details.labSubtotal')}</span>
                           <span>${selectedBill.totals?.labTotal || 0}</span>
                         </div>
                       </div>
@@ -336,7 +338,7 @@ const PatientBillingPage = () => {
                     {/* Scans */}
                     {selectedBill.hospitalCharges.scans?.length > 0 && (
                       <div>
-                        <p className="font-medium text-sm mb-2">Scans/Imaging</p>
+                        <p className="font-medium text-sm mb-2">{t('patientBilling.details.scans')}</p>
                         <div className="space-y-1">
                           {selectedBill.hospitalCharges.scans.map((scan: any, idx: number) => (
                             <div key={idx} className="flex justify-between text-sm">
@@ -346,7 +348,7 @@ const PatientBillingPage = () => {
                           ))}
                         </div>
                         <div className="flex justify-between text-sm font-medium mt-2 pt-2 border-t">
-                          <span>Scans Subtotal:</span>
+                          <span>{t('patientBilling.details.scanSubtotal')}</span>
                           <span>${selectedBill.totals?.scanTotal || 0}</span>
                         </div>
                       </div>
@@ -355,7 +357,7 @@ const PatientBillingPage = () => {
                     {/* Medicines */}
                     {selectedBill.hospitalCharges.medicines?.length > 0 && (
                       <div>
-                        <p className="font-medium text-sm mb-2">Medicines</p>
+                        <p className="font-medium text-sm mb-2">{t('patientBilling.details.medicines')}</p>
                         <div className="space-y-1">
                           {selectedBill.hospitalCharges.medicines.map((med: any, idx: number) => (
                             <div key={idx} className="flex justify-between text-sm">
@@ -367,7 +369,7 @@ const PatientBillingPage = () => {
                           ))}
                         </div>
                         <div className="flex justify-between text-sm font-medium mt-2 pt-2 border-t">
-                          <span>Medicines Subtotal:</span>
+                          <span>{t('patientBilling.details.medicineSubtotal')}</span>
                           <span>${selectedBill.totals?.medicineTotal || 0}</span>
                         </div>
                       </div>
@@ -376,7 +378,7 @@ const PatientBillingPage = () => {
                     {/* Bed Charges */}
                     {selectedBill.hospitalCharges.bedCharges?.days > 0 && (
                       <div>
-                        <p className="font-medium text-sm mb-2">Bed Charges</p>
+                        <p className="font-medium text-sm mb-2">{t('patientBilling.details.bedCharges')}</p>
                         <div className="flex justify-between text-sm">
                           <span className="text-muted-foreground">
                             {selectedBill.hospitalCharges.bedCharges.days} days × ${selectedBill.hospitalCharges.bedCharges.ratePerDay}/day
@@ -389,7 +391,7 @@ const PatientBillingPage = () => {
                     {/* Service Fees */}
                     {selectedBill.hospitalCharges.serviceFees?.length > 0 && (
                       <div>
-                        <p className="font-medium text-sm mb-2">Service Fees</p>
+                        <p className="font-medium text-sm mb-2">{t('patientBilling.details.serviceFees')}</p>
                         <div className="space-y-1">
                           {selectedBill.hospitalCharges.serviceFees.map((fee: any, idx: number) => (
                             <div key={idx} className="flex justify-between text-sm">
@@ -399,7 +401,7 @@ const PatientBillingPage = () => {
                           ))}
                         </div>
                         <div className="flex justify-between text-sm font-medium mt-2 pt-2 border-t">
-                          <span>Service Fees Subtotal:</span>
+                          <span>{t('patientBilling.details.serviceSubtotal')}</span>
                           <span>${selectedBill.totals?.serviceTotal || 0}</span>
                         </div>
                       </div>
@@ -413,25 +415,25 @@ const PatientBillingPage = () => {
                 <CardContent className="pt-6">
                   <div className="space-y-2">
                     <div className="flex justify-between">
-                      <span>Consultation Fee:</span>
+                      <span>{t('patientBilling.summary.consultation')}</span>
                       <span>${selectedBill.consultationFee?.amount || 0}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>Hospital Charges:</span>
+                      <span>{t('patientBilling.summary.hospital')}</span>
                       <span>${selectedBill.totals?.hospitalTotal || 0}</span>
                     </div>
                     <div className="border-t pt-2 flex justify-between font-bold text-lg">
-                      <span>Grand Total:</span>
+                      <span>{t('patientBilling.summary.grandTotal')}</span>
                       <span>${selectedBill.totals?.grandTotal || 0}</span>
                     </div>
                     {selectedBill.paidAmount > 0 && (
                       <>
                         <div className="flex justify-between text-green-600">
-                          <span>Amount Paid:</span>
+                          <span>{t('patientBilling.summary.amountPaid')}</span>
                           <span>-${selectedBill.paidAmount}</span>
                         </div>
                         <div className="border-t pt-2 flex justify-between font-bold text-lg text-red-600">
-                          <span>Amount Due:</span>
+                          <span>{t('patientBilling.summary.amountDue')}</span>
                           <span>${(selectedBill.totals?.grandTotal - selectedBill.paidAmount).toFixed(2)}</span>
                         </div>
                       </>
@@ -444,10 +446,10 @@ const PatientBillingPage = () => {
               <div className="flex justify-between pt-4">
                 <Button variant="outline" onClick={handleDownload}>
                   <Download className="h-4 w-4 mr-2" />
-                  Download PDF
+                  {t('patientBilling.button.download')}
                 </Button>
                 <Button onClick={() => setDialogOpen(false)}>
-                  Close
+                  {t('patientBilling.button.close')}
                 </Button>
               </div>
             </div>

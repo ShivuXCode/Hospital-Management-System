@@ -415,10 +415,10 @@ router.get('/patient/my-bills', authMiddleware, authorizeRoles('Patient'), async
 // @access  Private (Admin, Doctor)
 router.post('/create-manual', authMiddleware, authorizeRoles('Admin', 'Doctor'), async (req, res) => {
   try {
-    const { patientId, patientName, patientEmail, doctorId, doctorName, consultationFee, notes } = req.body;
+    const { patientId, doctorId, doctorName, consultationFee, notes } = req.body;
 
     // Validate required fields
-    if (!patientId || !patientName || !patientEmail) {
+    if (!patientId) {
       return res.status(400).json({
         success: false,
         message: 'Patient information is required'
@@ -443,15 +443,34 @@ router.post('/create-manual', authMiddleware, authorizeRoles('Admin', 'Doctor'),
       if (!doctorProfile) {
         return res.status(403).json({ success: false, message: 'Doctor profile not found' });
       }
+
+      const doctorCriteria = [{ doctor: doctorProfile._id }, { doctorName: doctorProfile.name }];
+
+      const hasTreatedPatient = await Appointment.exists({
+        user: patientId,
+        status: { $regex: /^completed$/i },
+        $or: doctorCriteria
+      });
+
+      if (!hasTreatedPatient) {
+        return res.status(403).json({
+          success: false,
+          message: 'You can only create bills for patients you have treated'
+        });
+      }
+
       finalDoctorId = req.user.id;
       finalDoctorName = doctorProfile.name;
     }
 
+    const sanitizedPatientName = patient.name;
+    const sanitizedPatientEmail = patient.email;
+
     // Create new bill without appointment
     const bill = new IntegratedBilling({
       patient: patientId,
-      patientName,
-      patientEmail,
+      patientName: sanitizedPatientName,
+      patientEmail: sanitizedPatientEmail,
       doctor: finalDoctorId,
       doctorName: finalDoctorName || 'N/A',
       consultationFee: {
@@ -485,25 +504,70 @@ router.post('/create-manual', authMiddleware, authorizeRoles('Admin', 'Doctor'),
 // @access  Private (Admin, Doctor)
 router.get('/available-patients', authMiddleware, authorizeRoles('Admin', 'Doctor'), async (req, res) => {
   try {
-    const patients = await User.find({ role: 'Patient' })
-      .select('name email')
-      .sort({ name: 1 });
+    const filterDemoPatients = (records) => {
+      return records.filter((record) => {
+        const name = record.name?.toLowerCase() || '';
+        const email = record.email?.toLowerCase() || '';
+        return !name.includes('demo') &&
+               !name.includes('test') &&
+               !name.includes('dummy') &&
+               !email.includes('demo') &&
+               !email.includes('test') &&
+               !email.includes('dummy');
+      });
+    };
 
-    // Filter out demo/test patients
-    const filteredPatients = patients.filter(patient => {
-      const patientName = patient.name?.toLowerCase() || '';
-      const patientEmail = patient.email?.toLowerCase() || '';
-      return !patientName.includes('demo') && 
-             !patientName.includes('test') && 
-             !patientName.includes('dummy') &&
-             !patientEmail.includes('demo') && 
-             !patientEmail.includes('test') &&
-             !patientEmail.includes('dummy');
+    if (req.user.role === 'Admin') {
+      const patients = await User.find({ role: 'Patient' })
+        .select('name email')
+        .sort({ name: 1 });
+
+      const filteredPatients = filterDemoPatients(patients);
+
+      return res.status(200).json({
+        success: true,
+        patients: filteredPatients
+      });
+    }
+
+    // Doctor-specific filtering: only patients they have completed appointments with
+    const doctorProfile = await Doctor.findOne({ userId: req.user.id });
+    if (!doctorProfile) {
+      return res.status(404).json({
+        success: false,
+        message: 'Doctor profile not found'
+      });
+    }
+
+    const doctorCriteria = [{ doctor: doctorProfile._id }, { doctorName: doctorProfile.name }];
+
+    const appointments = await Appointment.find({
+      status: { $regex: /^completed$/i },
+      user: { $ne: null },
+      $or: doctorCriteria
+    })
+      .populate('user', 'name email');
+
+    const uniquePatients = new Map();
+    appointments.forEach((appointment) => {
+      const patient = appointment.user;
+      if (!patient) return;
+      const key = patient._id.toString();
+      if (!uniquePatients.has(key)) {
+        uniquePatients.set(key, {
+          _id: patient._id,
+          name: patient.name,
+          email: patient.email
+        });
+      }
     });
 
-    res.status(200).json({
+    const patientsForDoctor = filterDemoPatients(Array.from(uniquePatients.values()))
+      .sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+
+    return res.status(200).json({
       success: true,
-      patients: filteredPatients
+      patients: patientsForDoctor
     });
   } catch (error) {
     console.error('❌ Get available patients error:', error);

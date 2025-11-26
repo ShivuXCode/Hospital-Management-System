@@ -23,10 +23,10 @@ const Services = () => {
       title: t('services.emergency'),
       description: t('services.emergencyDesc'),
       features: [
-        'Trauma care unit',
-        'Critical care services',
-        'Emergency surgery',
-        'Ambulance services',
+        'services.features.emergency.trauma',
+        'services.features.emergency.critical',
+        'services.features.emergency.surgery',
+        'services.features.emergency.ambulance',
       ],
     },
     {
@@ -34,10 +34,10 @@ const Services = () => {
       title: t('services.specialist'),
       description: t('services.specialistDesc'),
       features: [
-        'Multi-specialty consultations',
-        'Second opinion services',
-        'Follow-up care',
-        'Telemedicine available',
+        'services.features.specialist.multi',
+        'services.features.specialist.second',
+        'services.features.specialist.followup',
+        'services.features.specialist.telemedicine',
       ],
     },
     {
@@ -45,10 +45,10 @@ const Services = () => {
       title: t('services.diagnostic'),
       description: t('services.diagnosticDesc'),
       features: [
-        'Digital X-Ray',
-        'CT & MRI scans',
-        'Laboratory services',
-        'Pathology testing',
+        'services.features.diagnostic.xray',
+        'services.features.diagnostic.ct',
+        'services.features.diagnostic.lab',
+        'services.features.diagnostic.pathology',
       ],
     },
     {
@@ -56,54 +56,54 @@ const Services = () => {
       title: t('services.pharmacy'),
       description: t('services.pharmacyDesc'),
       features: [
-        '24/7 pharmacy services',
-        'Home delivery available',
-        'Generic medicines',
-        'Medicine counseling',
+        'services.features.pharmacy.roundClock',
+        'services.features.pharmacy.delivery',
+        'services.features.pharmacy.generic',
+        'services.features.pharmacy.counseling',
       ],
     },
     {
       icon: HeartPulse,
-      title: 'Health Checkup Packages',
-      description: 'Comprehensive health screening programs',
+      title: t('services.packages.title'),
+      description: t('services.packages.description'),
       features: [
-        'Executive health checkup',
-        'Cardiac screening',
-        'Diabetes screening',
-        'Cancer screening',
+        'services.features.packages.executive',
+        'services.features.packages.cardiac',
+        'services.features.packages.diabetes',
+        'services.features.packages.cancer',
       ],
     },
     {
       icon: Shield,
-      title: 'Insurance Services',
-      description: 'Cashless treatment facility',
+      title: t('services.insurance.title'),
+      description: t('services.insurance.description'),
       features: [
-        'All major insurance accepted',
-        'Cashless facility',
-        'Claim assistance',
-        'Corporate tie-ups',
+        'services.features.insurance.accepted',
+        'services.features.insurance.cashless',
+        'services.features.insurance.claims',
+        'services.features.insurance.corporate',
       ],
     },
     {
       icon: Activity,
-      title: 'Preventive Care',
-      description: 'Health education and wellness programs',
+      title: t('services.preventive.title'),
+      description: t('services.preventive.description'),
       features: [
-        'Vaccination programs',
-        'Health education',
-        'Nutrition counseling',
-        'Fitness programs',
+        'services.features.preventive.vaccination',
+        'services.features.preventive.education',
+        'services.features.preventive.nutrition',
+        'services.features.preventive.fitness',
       ],
     },
     {
       icon: Heart,
-      title: 'Maternity Care',
-      description: 'Complete care for mother and baby',
+      title: t('services.maternity.title'),
+      description: t('services.maternity.description'),
       features: [
-        'Antenatal care',
-        'Labor & delivery',
-        'Postnatal care',
-        'Lactation support',
+        'services.features.maternity.antenatal',
+        'services.features.maternity.labor',
+        'services.features.maternity.postnatal',
+        'services.features.maternity.lactation',
       ],
     },
   ];
@@ -115,7 +115,7 @@ const Services = () => {
         <div className="container mx-auto text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">{t('services.title')}</h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Comprehensive healthcare services designed to meet all your medical needs
+            {t('services.subtitle')}
           </p>
         </div>
       </section>
@@ -140,7 +140,7 @@ const Services = () => {
                       {service.features.map((feature, idx) => (
                         <li key={idx} className="flex items-start gap-2">
                           <span className="text-primary mt-1">•</span>
-                          <span>{feature}</span>
+                          <span>{t(feature)}</span>
                         </li>
                       ))}
                     </ul>
@@ -160,9 +160,9 @@ const Services = () => {
         return (
           <section className="py-16 px-4 bg-primary text-primary-foreground">
             <div className="container mx-auto text-center">
-              <h2 className="text-3xl font-bold mb-4">Need Medical Assistance?</h2>
+              <h2 className="text-3xl font-bold mb-4">{t('services.cta.title')}</h2>
               <p className="text-lg mb-8 opacity-90">
-                Our team is available 24/7 to help you
+                {t('services.cta.subtitle')}
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button asChild size="lg" variant="secondary">

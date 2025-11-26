@@ -26,98 +26,170 @@ const Departments = () => {
 
   const defaultDepartments = [
     {
+      rawName: 'Cardiology',
       icon: Heart,
       name: t('departments.cardiology'),
       description: t('departments.cardiologyDesc'),
-      services: ['ECG', 'Echocardiography', 'Angiography', 'Cardiac Surgery'],
+      services: [
+        'departments.services.cardiology.ecg',
+        'departments.services.cardiology.echo',
+        'departments.services.cardiology.angiography',
+        'departments.services.cardiology.surgery',
+      ],
       doctors: 8,
       color: 'text-destructive',
     },
     {
+      rawName: 'Orthopedics',
       icon: Bone,
       name: t('departments.orthopedics'),
       description: t('departments.orthopedicsDesc'),
-      services: ['Joint Replacement', 'Fracture Care', 'Sports Medicine', 'Spine Surgery'],
+      services: [
+        'departments.services.orthopedics.joint',
+        'departments.services.orthopedics.fracture',
+        'departments.services.orthopedics.sports',
+        'departments.services.orthopedics.spine',
+      ],
       doctors: 6,
       color: 'text-secondary',
     },
     {
+      rawName: 'Pediatrics',
       icon: Baby,
       name: t('departments.pediatrics'),
       description: t('departments.pediatricsDesc'),
-      services: ['Vaccination', 'Child Development', 'Neonatal Care', 'Pediatric Surgery'],
+      services: [
+        'departments.services.pediatrics.vaccination',
+        'departments.services.pediatrics.development',
+        'departments.services.pediatrics.neonatal',
+        'departments.services.pediatrics.surgery',
+      ],
       doctors: 5,
       color: 'text-primary',
     },
     {
+      rawName: 'Neurology',
       icon: Brain,
       name: t('departments.neurology'),
       description: t('departments.neurologyDesc'),
-      services: ['Stroke Care', 'Epilepsy Treatment', 'Brain Surgery', 'Nerve Disorders'],
+      services: [
+        'departments.services.neurology.stroke',
+        'departments.services.neurology.epilepsy',
+        'departments.services.neurology.surgery',
+        'departments.services.neurology.nerves',
+      ],
       doctors: 4,
       color: 'text-purple-600',
     },
     {
+      rawName: 'Ophthalmology',
       icon: Eye,
-      name: 'Ophthalmology',
-      description: 'Eye care and vision specialists',
-      services: ['Cataract Surgery', 'LASIK', 'Glaucoma Treatment', 'Retina Care'],
+      name: t('departments.ophthalmology'),
+      description: t('departments.ophthalmologyDesc'),
+      services: [
+        'departments.services.ophthalmology.cataract',
+        'departments.services.ophthalmology.lasik',
+        'departments.services.ophthalmology.glaucoma',
+        'departments.services.ophthalmology.retina',
+      ],
       doctors: 3,
       color: 'text-blue-600',
     },
     {
+      rawName: 'Oncology',
       icon: Syringe,
-      name: 'Oncology',
-      description: 'Cancer diagnosis and treatment',
-      services: ['Chemotherapy', 'Radiation Therapy', 'Surgical Oncology', 'Palliative Care'],
+      name: t('departments.oncology'),
+      description: t('departments.oncologyDesc'),
+      services: [
+        'departments.services.oncology.chemo',
+        'departments.services.oncology.radiation',
+        'departments.services.oncology.surgery',
+        'departments.services.oncology.palliative',
+      ],
       doctors: 5,
       color: 'text-orange-600',
     },
     {
+      rawName: 'General Medicine',
       icon: Stethoscope,
-      name: 'General Medicine',
-      description: 'Primary care and internal medicine',
-      services: ['Health Checkups', 'Chronic Disease Management', 'Preventive Care', 'Consultation'],
+      name: t('departments.generalMedicine'),
+      description: t('departments.generalMedicineDesc'),
+      services: [
+        'departments.services.generalMedicine.checkups',
+        'departments.services.generalMedicine.chronic',
+        'departments.services.generalMedicine.preventive',
+        'departments.services.generalMedicine.consultation',
+      ],
       doctors: 10,
       color: 'text-primary',
     },
     {
+      rawName: 'Emergency Medicine',
       icon: Activity,
-      name: 'Emergency Medicine',
-      description: '24/7 emergency care services',
-      services: ['Trauma Care', 'Critical Care', 'Emergency Surgery', 'Ambulance Services'],
+      name: t('departments.emergencyMedicine'),
+      description: t('departments.emergencyMedicineDesc'),
+      services: [
+        'departments.services.emergency.trauma',
+        'departments.services.emergency.critical',
+        'departments.services.emergency.surgery',
+        'departments.services.emergency.ambulance',
+      ],
       doctors: 12,
       color: 'text-destructive',
     },
     {
+      rawName: 'Gastroenterology',
       icon: Pill,
-      name: 'Gastroenterology',
-      description: 'Digestive system specialists',
-      services: ['Endoscopy', 'Colonoscopy', 'Liver Care', 'IBD Treatment'],
+      name: t('departments.gastroenterology'),
+      description: t('departments.gastroenterologyDesc'),
+      services: [
+        'departments.services.gastro.endoscopy',
+        'departments.services.gastro.colonoscopy',
+        'departments.services.gastro.liver',
+        'departments.services.gastro.ibd',
+      ],
       doctors: 4,
       color: 'text-green-600',
     },
     {
+      rawName: 'Obstetrics & Gynecology',
       icon: Users,
-      name: 'Obstetrics & Gynecology',
-      description: "Women's health specialists",
-      services: ['Maternity Care', 'Gynecological Surgery', 'Fertility Treatment', 'Prenatal Care'],
+      name: t('departments.obgyn'),
+      description: t('departments.obgynDesc'),
+      services: [
+        'departments.services.obgyn.maternity',
+        'departments.services.obgyn.surgery',
+        'departments.services.obgyn.fertility',
+        'departments.services.obgyn.prenatal',
+      ],
       doctors: 6,
       color: 'text-pink-600',
     },
     {
+      rawName: 'Radiology',
       icon: Scan,
-      name: 'Radiology',
-      description: 'Advanced imaging and diagnostics',
-      services: ['X-Ray', 'CT Scan', 'MRI', 'Ultrasound'],
+      name: t('departments.radiology'),
+      description: t('departments.radiologyDesc'),
+      services: [
+        'departments.services.radiology.xray',
+        'departments.services.radiology.ct',
+        'departments.services.radiology.mri',
+        'departments.services.radiology.ultrasound',
+      ],
       doctors: 5,
       color: 'text-indigo-600',
     },
     {
+      rawName: 'General Surgery',
       icon: Scissors,
-      name: 'General Surgery',
-      description: 'Surgical procedures and operations',
-      services: ['Laparoscopic Surgery', 'Hernia Repair', 'Appendectomy', 'Gallbladder Surgery'],
+      name: t('departments.generalSurgery'),
+      description: t('departments.generalSurgeryDesc'),
+      services: [
+        'departments.services.generalSurgery.laparoscopic',
+        'departments.services.generalSurgery.hernia',
+        'departments.services.generalSurgery.appendix',
+        'departments.services.generalSurgery.gallbladder',
+      ],
       doctors: 7,
       color: 'text-secondary',
     },
@@ -132,16 +204,18 @@ const Departments = () => {
         if (data.success && data.departments && data.departments.length > 0) {
           // Map API departments to match the UI format
           const mappedDepts = data.departments.map((dept: any) => {
+            const deptName = (dept.name || '').toString();
+            const normalizedName = deptName.toLowerCase();
+
             // Find matching icon from default departments or use default
             const defaultDept = defaultDepartments.find(
-              d => d.name.toLowerCase() === dept.name.toLowerCase() || 
-                   t(`departments.${dept.name.toLowerCase()}`).toLowerCase() === dept.name.toLowerCase()
+              d => d.rawName?.toLowerCase() === normalizedName
             );
-            
+
             return {
               icon: defaultDept?.icon || Stethoscope,
-              name: dept.name,
-              description: dept.description || `Specialized ${dept.name} services`,
+              name: deptName,
+              description: dept.description || `Specialized ${deptName} services`,
               services: dept.services || ['Consultation', 'Treatment', 'Surgery', 'Follow-up'],
               doctors: dept.staff?.length || 0,
               color: defaultDept?.color || 'text-primary',
@@ -171,7 +245,7 @@ const Departments = () => {
         <div className="container mx-auto text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">{t('departments.title')}</h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Comprehensive medical specialties under one roof
+            {t('departments.subtitle')}
           </p>
         </div>
       </section>
@@ -188,7 +262,7 @@ const Departments = () => {
                     <div className="flex items-start justify-between mb-2">
                       <Icon className={`h-10 w-10 ${dept.color}`} />
                       <span className="text-sm text-muted-foreground">
-                        {dept.doctors} {t('dashboard.doctors')}
+                        {dept.doctors} {t('departments.doctorCount')}
                       </span>
                     </div>
                     <CardTitle className="text-xl">{dept.name}</CardTitle>
@@ -198,15 +272,15 @@ const Departments = () => {
                       {dept.description}
                     </p>
                     <div className="mb-4">
-                      <h4 className="font-semibold text-sm mb-2">Services:</h4>
+                      <h4 className="font-semibold text-sm mb-2">{t('departments.servicesLabel')}</h4>
                       <ul className="text-sm text-muted-foreground space-y-1">
                         {dept.services.map((service, idx) => (
-                          <li key={idx}>• {service}</li>
+                          <li key={idx}>• {t(service)}</li>
                         ))}
                       </ul>
                     </div>
                     <Button asChild variant="outline" className="w-full" size="sm">
-                      <Link to="/doctors">{t('doctors.viewProfile')}</Link>
+                      <Link to="/doctors">{t('departments.button.viewDoctors')}</Link>
                     </Button>
                   </CardContent>
                 </Card>

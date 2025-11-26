@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { FileText, Calendar, User, Pill, Clock, RefreshCcw } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { apiService } from '@/services/api';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface Prescription {
   id: string;
@@ -23,6 +24,7 @@ interface Prescription {
 
 const PatientPrescriptions = () => {
   const { toast } = useToast();
+  const { t } = useLanguage();
   const [prescriptions, setPrescriptions] = useState<Prescription[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [showExpired, setShowExpired] = useState<boolean>(false);
@@ -36,12 +38,12 @@ const PatientPrescriptions = () => {
       setLoading(true);
       const user = JSON.parse(localStorage.getItem('user') || '{}');
       if (!user?.id) {
-        throw new Error('Unable to identify patient. Please sign in again.');
+        throw new Error(t('patientBilling.toast.errorDesc'));
       }
 
       const response = await apiService.getPatientPrescriptions(user.id);
       if (!response.success) {
-        throw new Error(response.message || 'Failed to load prescriptions');
+        throw new Error(response.message || t('patientBilling.toast.errorDesc'));
       }
 
       const normalized: Prescription[] = (response.prescriptions || []).map((pres: any) => ({
@@ -58,8 +60,8 @@ const PatientPrescriptions = () => {
     } catch (error: any) {
       console.error('Failed to load prescriptions:', error);
       toast({
-        title: 'Error',
-        description: error.message || 'Failed to load prescriptions',
+        title: t('patientBilling.toast.errorTitle'),
+        description: error.message || t('patientBilling.toast.errorDesc'),
         variant: 'destructive',
       });
     } finally {
@@ -81,16 +83,16 @@ const PatientPrescriptions = () => {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-3xl font-bold mb-2">My Prescriptions</h1>
-          <p className="text-muted-foreground">View prescriptions issued by your doctors</p>
+          <h1 className="text-3xl font-bold mb-2">{t('patientPrescriptions.title')}</h1>
+          <p className="text-muted-foreground">{t('patientPrescriptions.subtitle')}</p>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="outline" onClick={() => setShowExpired((prev) => !prev)}>
-            {showExpired ? 'Hide Expired' : 'Show Expired'}
+            {showExpired ? t('patientPrescriptions.toggle.hideExpired') : t('patientPrescriptions.toggle.showExpired')}
           </Button>
           <Button variant="outline" onClick={loadPrescriptions} disabled={loading}>
             <RefreshCcw className={`mr-2 h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
-            Refresh
+            {t('patientPrescriptions.refresh')}
           </Button>
         </div>
       </div>
@@ -113,17 +115,17 @@ const PatientPrescriptions = () => {
                   <div className="flex-1">
                     <CardTitle className="text-xl flex items-center gap-2">
                       <FileText className="h-5 w-5 text-primary" />
-                      Prescription
+                      {t('patientPrescriptions.cardTitle')}
                     </CardTitle>
                     <div className="flex items-center gap-2 mt-2 text-sm text-muted-foreground">
                       <User className="h-4 w-4" />
-                      <span>Dr. {prescription.doctorName}</span>
+                      <span>{t('patientPrescriptions.doctorPrefix')} {prescription.doctorName}</span>
                     </div>
                   </div>
                   {isExpired(prescription.validUntil) ? (
-                    <Badge variant="secondary">Expired</Badge>
+                    <Badge variant="secondary">{t('patientPrescriptions.status.expired')}</Badge>
                   ) : (
-                    <Badge className="bg-green-500">Active</Badge>
+                    <Badge className="bg-green-500">{t('patientPrescriptions.status.active')}</Badge>
                   )}
                 </div>
               </CardHeader>
@@ -132,7 +134,7 @@ const PatientPrescriptions = () => {
                   <div className="flex items-center gap-2 text-sm">
                     <Calendar className="h-4 w-4 text-primary" />
                     <span>
-                      Issued:{' '}
+                      {t('patientPrescriptions.issued')}{' '}
                       {prescription.dateIssued
                         ? new Date(prescription.dateIssued).toLocaleDateString()
                         : '—'}
@@ -141,7 +143,7 @@ const PatientPrescriptions = () => {
                   <div className="flex items-center gap-2 text-sm">
                     <Clock className="h-4 w-4 text-primary" />
                     <span>
-                      Valid Until:{' '}
+                      {t('patientPrescriptions.validUntil')}{' '}
                       {prescription.validUntil
                         ? new Date(prescription.validUntil).toLocaleDateString()
                         : '—'}
@@ -151,7 +153,7 @@ const PatientPrescriptions = () => {
 
                 {prescription.diagnosis && (
                   <div className="p-3 bg-muted rounded-lg">
-                    <p className="text-sm font-medium mb-1">Diagnosis:</p>
+                    <p className="text-sm font-medium mb-1">{t('patientPrescriptions.diagnosis')}</p>
                     <p className="text-sm text-muted-foreground">{prescription.diagnosis}</p>
                   </div>
                 )}
@@ -159,7 +161,7 @@ const PatientPrescriptions = () => {
                 <div>
                   <h4 className="text-sm font-medium mb-3 flex items-center gap-2">
                     <Pill className="h-4 w-4 text-primary" />
-                    Medications
+                    {t('patientPrescriptions.medications')}
                   </h4>
                   <div className="space-y-2">
                     {prescription.medicines.map((med, index) => (
@@ -170,13 +172,13 @@ const PatientPrescriptions = () => {
                         <p className="font-medium text-sm">{med.name}</p>
                         <div className="grid grid-cols-3 gap-2 mt-2 text-xs text-muted-foreground">
                           <div>
-                            <span className="font-medium">Dosage:</span> {med.dosage}
+                            <span className="font-medium">{t('patientPrescriptions.dosage')}</span> {med.dosage}
                           </div>
                           <div>
-                            <span className="font-medium">Duration:</span> {med.duration || '-'}
+                            <span className="font-medium">{t('patientPrescriptions.duration')}</span> {med.duration || '-'}
                           </div>
                           <div>
-                            <span className="font-medium">Instructions:</span> {med.instructions || '-'}
+                            <span className="font-medium">{t('patientPrescriptions.instructions')}</span> {med.instructions || '-'}
                           </div>
                         </div>
                       </div>
@@ -186,7 +188,7 @@ const PatientPrescriptions = () => {
 
                 {prescription.notes && (
                   <div className="p-3 bg-blue-50 dark:bg-blue-950/30 rounded-lg border border-blue-200 dark:border-blue-800">
-                    <p className="text-sm font-medium mb-1">Doctor's Notes:</p>
+                    <p className="text-sm font-medium mb-1">{t('patientPrescriptions.notes')}</p>
                     <p className="text-sm text-muted-foreground">{prescription.notes}</p>
                   </div>
                 )}
@@ -198,11 +200,11 @@ const PatientPrescriptions = () => {
         <Card className="shadow-soft">
           <CardContent className="py-12 text-center">
             <FileText className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-            <h3 className="text-xl font-semibold mb-2">No Prescriptions Found</h3>
+            <h3 className="text-xl font-semibold mb-2">{t('patientPrescriptions.empty.title')}</h3>
             <p className="text-muted-foreground">
               {showExpired
-                ? 'You have no prescriptions yet.'
-                : 'You have no active prescriptions.'}
+                ? t('patientPrescriptions.empty.descAll')
+                : t('patientPrescriptions.empty.descActive')}
             </p>
           </CardContent>
         </Card>

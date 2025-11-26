@@ -32,8 +32,14 @@ const Login = () => {
           title: 'Login Successful!',
           description: `Welcome back, ${response.user?.name}!`,
         });
-        // navigate to backend-provided redirect
-        navigate(response.redirect || '/');
+        // Navigate by role (fallback to backend-provided redirect or home)
+        const role = response.user?.role;
+        const byRole = role === 'Doctor' ? '/dashboard/doctor'
+          : role === 'Nurse' ? '/dashboard/nurse'
+          : role === 'Admin' ? '/'
+          : role === 'Patient' ? '/'
+          : undefined;
+        navigate(byRole ?? response.redirect ?? '/', { replace: true });
       } else {
         toast({
           title: 'Login Failed',

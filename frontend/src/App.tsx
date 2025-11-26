@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -54,6 +54,7 @@ import AdminInventoryManager from "./pages/dashboard/AdminInventoryManager";
 import AdminIoTDevices from "./pages/dashboard/AdminIoTDevices";
 import AdminContactMessagesPage from "./pages/dashboard/AdminContactMessagesPage";
 import AdminMessagesPage from "./pages/dashboard/AdminMessagesPage";
+import { apiService } from "./services/api";
 
 const queryClient = new QueryClient();
 
@@ -65,6 +66,34 @@ const PublicLayout = ({ children }: { children: React.ReactNode }) => (
   </>
 );
 
+const RoleAwareHome = () => {
+  const isAuthenticated = apiService.isAuthenticated();
+  const user = apiService.getUser();
+
+  if (isAuthenticated && user?.role) {
+    const target =
+      user.role === 'Doctor' ? '/dashboard/doctor' :
+      user.role === 'Nurse' ? '/dashboard/nurse' : '/';
+    if (target !== '/') {
+      return <Navigate to={target} replace />;
+    }
+  }
+
+  return (
+    <PublicLayout><Home /></PublicLayout>
+  );
+};
+
+const RoleDashboardRedirect = () => {
+  const isAuthenticated = apiService.isAuthenticated();
+  const user = apiService.getUser();
+  if (!isAuthenticated || !user?.role) return <Navigate to="/login" replace />;
+  const target =
+    user.role === 'Doctor' ? '/dashboard/doctor' :
+    user.role === 'Nurse' ? '/dashboard/nurse' : '/';
+  return <Navigate to={target} replace />;
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <LanguageProvider>
@@ -74,7 +103,8 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             {/* Public Routes */}
-            <Route path="/" element={<PublicLayout><Home /></PublicLayout>} />
+            <Route path="/" element={<RoleAwareHome />} />
+            <Route path="/dashboard" element={<RoleDashboardRedirect />} />
             <Route path="/about" element={<PublicLayout><About /></PublicLayout>} />
             <Route path="/departments" element={<PublicLayout><Departments /></PublicLayout>} />
             <Route path="/doctors" element={<PublicLayout><Doctors /></PublicLayout>} />
@@ -426,7 +456,7 @@ const App = () => (
               path="/dashboard/patient"
               element={
                 <ProtectedRoute allowedRoles={['Patient']}>
-                  <DashboardLayout role="patient" hideTopNav>
+                  <DashboardLayout role="patient">
                     <PatientDashboard />
                   </DashboardLayout>
                 </ProtectedRoute>
@@ -436,7 +466,7 @@ const App = () => (
               path="/dashboard/patient/appointments"
               element={
                 <ProtectedRoute allowedRoles={['Patient']}>
-                  <DashboardLayout role="patient" hideTopNav>
+                  <DashboardLayout role="patient">
                     <PatientAppointments />
                   </DashboardLayout>
                 </ProtectedRoute>
@@ -446,7 +476,7 @@ const App = () => (
               path="/dashboard/patient/prescriptions"
               element={
                 <ProtectedRoute allowedRoles={['Patient']}>
-                  <DashboardLayout role="patient" hideTopNav>
+                  <DashboardLayout role="patient">
                     <PatientPrescriptions />
                   </DashboardLayout>
                 </ProtectedRoute>
@@ -456,7 +486,7 @@ const App = () => (
               path="/dashboard/patient/reviews"
               element={
                 <ProtectedRoute allowedRoles={['Patient']}>
-                  <DashboardLayout role="patient" hideTopNav>
+                  <DashboardLayout role="patient">
                     <PatientReviewsPage />
                   </DashboardLayout>
                 </ProtectedRoute>
@@ -466,7 +496,7 @@ const App = () => (
               path="/dashboard/patient/records"
               element={
                 <ProtectedRoute allowedRoles={['Patient']}>
-                  <DashboardLayout role="patient" hideTopNav>
+                  <DashboardLayout role="patient">
                     <PatientHealthRecords />
                   </DashboardLayout>
                 </ProtectedRoute>
@@ -476,7 +506,7 @@ const App = () => (
               path="/dashboard/patient/billing"
               element={
                 <ProtectedRoute allowedRoles={['Patient']}>
-                  <DashboardLayout role="patient" hideTopNav>
+                  <DashboardLayout role="patient">
                     <PatientBillingPage />
                   </DashboardLayout>
                 </ProtectedRoute>
@@ -486,7 +516,7 @@ const App = () => (
               path="/dashboard/patient/profile"
               element={
                 <ProtectedRoute allowedRoles={['Patient']}>
-                  <DashboardLayout role="patient" hideTopNav>
+                  <DashboardLayout role="patient">
                     <ProfileView />
                   </DashboardLayout>
                 </ProtectedRoute>
@@ -496,7 +526,7 @@ const App = () => (
               path="/dashboard/patient/profile/edit"
               element={
                 <ProtectedRoute allowedRoles={['Patient']}>
-                  <DashboardLayout role="patient" hideTopNav>
+                  <DashboardLayout role="patient">
                     <ProfileEdit />
                   </DashboardLayout>
                 </ProtectedRoute>
