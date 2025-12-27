@@ -1,4 +1,0 @@
-- Review existing nurse and doctor models plus current admin dashboard UI.
-- Add backend endpoints for admin to manage doctor-nurse assignments and ensure appointment retrieval respects assignments.
-- Update frontend admin dashboard with section to assign nurses to doctors and reflect assignments in doctor/nurse views.
-- Verify submission by running relevant tests or lint checks if available.
