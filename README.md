@@ -100,11 +100,6 @@ cd backend
 node seedAllUsers.js
 ```
 
-This will create 31 demo users:
-- 1 Admin
-- 15 Doctors
-- 15 Nurses
-
 ## 🚀 Running the Application
 
 ### Start Backend Server
@@ -127,43 +122,6 @@ Frontend runs on: `http://localhost:8080`
 - **Email:** shivani.admin@gmail.com
 - **Password:** Admin@123
 
-### Doctor Accounts
-| Name | Email | Password |
-|------|-------|----------|
-| Karan Mehta | karan.doctor@gmail.com | Doctor@123 |
-| Arun Patel | arun.doctor@gmail.com | Arun@123 |
-| Priya Sharma | priya.doctor@gmail.com | Priya@123 |
-| Rajesh Kumar | rajesh.doctor@gmail.com | Rajesh@123 |
-| Sanjay Nair | sanjay.doctor@gmail.com | Sanjay@123 |
-| Deepa Menon | deepa.doctor@gmail.com | Deepa@123 |
-| Meera Patel | meera.doctor@gmail.com | Meera@123 |
-| Arjun Rao | arjun.doctor@gmail.com | Arjun@123 |
-| Suresh Iyer | suresh.doctor@gmail.com | Suresh@123 |
-| Kavitha Desai | kavitha.doctor@gmail.com | Kavitha@123 |
-| Amit Verma | amit.doctor@gmail.com | Amit@123 |
-| Lakshmi Krishnan | lakshmi.doctor@gmail.com | Lakshmi@123 |
-| Dr. Sarah Mitchell | sarah.mitchell@hospital.com | Sarah@123 |
-| Dr. Michael Chen | michael.chen@hospital.com | Michael@123 |
-| Dr. Anjali Verma | anjali.verma@hospital.com | Anjali@123 |
-
-### Nurse Accounts
-| Name | Email | Password |
-|------|-------|----------|
-| Asha Thomas | asha.nurse@gmail.com | Nurse@123 |
-| Neha Singh | neha.nurse@gmail.com | Neha@123 |
-| Riya Patel | riya.nurse@gmail.com | Riya@123 |
-| Anita Rao | anita.nurse@gmail.com | Anita@123 |
-| Divya Menon | divya.nurse@gmail.com | Divya@123 |
-| Sneha Varma | sneha.nurse@gmail.com | Sneha@123 |
-| Kavya Nair | kavya.nurse@gmail.com | Kavya@123 |
-| Pooja Sharma | pooja.nurse@gmail.com | Pooja@123 |
-| Meena Iyer | meena.nurse@gmail.com | Meena@123 |
-| Lakshmi Das | lakshmi.nurse@gmail.com | Lakshmi@123 |
-| Sara George | sara.nurse@gmail.com | Sara@123 |
-| Priya Kulkarni | priya.nurse@gmail.com | Priya@123 |
-| Nisha Joseph | nisha.nurse@gmail.com | Nisha@123 |
-| Shalini Desai | shalini.nurse@gmail.com | Shalini@123 |
-| Anjali Verma | anjali.nurse@gmail.com | Anjali@123 |
 
 ## 📁 Project Structure
 
